@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Métodos Numéricos Quiz — UANL FIME</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════════════════════
+     PANTALLA 1: Bienvenida
+══════════════════════════════════════════════════════════ -->
+<div id="screen-welcome" class="screen active">
+  <div class="welcome-card">
+    <div class="welcome-logo">📐</div>
+    <h1>Métodos Numéricos</h1>
+    <p class="subtitle">
+      UANL · FIME · Quiz interactivo por niveles<br>
+      Identifica el método correcto, calcula el valor intermedio y obtén el resultado final.
+    </p>
+
+    <div class="level-preview">
+      <div class="level-chip"><strong>Nivel 1 — Introducción</strong>5 preguntas · umbral 6 pts</div>
+      <div class="level-chip"><strong>Nivel 2 — Aprendiz</strong>6 preguntas · umbral 10 pts</div>
+      <div class="level-chip"><strong>Nivel 3 — Intermedio</strong>7 preguntas · umbral 15 pts</div>
+      <div class="level-chip"><strong>Nivel 4 — Avanzado</strong>8 preguntas · umbral 20 pts</div>
+      <div class="level-chip" style="grid-column:1/-1"><strong>Nivel 5 — Experto</strong>10 preguntas · sin umbral — calificación final</div>
+    </div>
+
+    <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1.2rem;">
+      Cada pregunta tiene <strong>3 componentes</strong>: método correcto, valor intermedio y resultado final.
+      La tolerancia de error numérico es ±0.001 por defecto.
+    </p>
+
+    <button id="btn-start" class="btn btn-primary" style="width:100%;font-size:1.05rem;padding:.75rem;">
+      Comenzar juego
+    </button>
+
+    <p style="font-size:.78rem;color:var(--text-muted);margin-top:1rem;">
+      Equipo 1 · Dra. Oralia Zamora Pequeño · Semestre Enero-Junio 2026
+    </p>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     PANTALLA 2: Intro de nivel
+══════════════════════════════════════════════════════════ -->
+<div id="screen-level-intro" class="screen">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);">
+    <div class="intro-card">
+      <div class="level-badge" id="intro-badge">NUEVO NIVEL</div>
+      <h2 id="intro-level-name"></h2>
+      <p id="intro-level-desc"></p>
+      <div class="threshold-info" id="intro-threshold"></div>
+      <div class="scoring-info" id="intro-scoring"></div>
+      <button id="btn-begin-level" class="btn btn-primary" style="width:100%;margin-top:.8rem;">
+        ¡Comenzar nivel!
+      </button>
+      <button class="btn btn-secondary" onclick="Game.goToMenu()" style="width:100%;margin-top:.5rem;">
+        ← Volver al menú
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     PANTALLA 3: Pregunta
+══════════════════════════════════════════════════════════ -->
+<div id="screen-question" class="screen">
+
+  <!-- Header fijo -->
+  <header class="level-header">
+    <button class="btn-menu" onclick="Game.goToMenu()" title="Volver al menú">← Menú</button>
+    <span class="hdr-title" id="hdr-level">Nivel 1</span>
+    <span class="hdr-progress-txt" id="hdr-progress">1 / 5</span>
+    <div class="hdr-info">
+      <span class="hdr-meta" id="hdr-threshold"></span>
+      <span class="hdr-score" id="hdr-score">Puntos: 0</span>
+    </div>
+  </header>
+
+  <!-- Barra de puntos -->
+  <div class="progress-track"><div class="progress-bar-fill" id="progress-bar-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="progress-label-txt"></div>
+
+  <!-- Cuerpo de la pregunta -->
+  <div class="question-body">
+
+    <!-- ── Columna izquierda: enunciado + respuestas ── -->
+    <div class="left-col">
+      <div class="card">
+        <div class="card-title">Problema</div>
+        <div id="question-statement"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-title">Tu respuesta</div>
+
+        <div class="answer-group">
+          <label for="input-intermediate" id="intermediate-label">
+            Selecciona el método para ver la etiqueta
+          </label>
+          <input type="number" id="input-intermediate" step="any"
+                 placeholder="Ingresa el valor intermedio…" />
+          <span class="answer-hint">Tolerancia: ±0.001</span>
+        </div>
+
+        <div class="answer-group">
+          <label for="input-final">Resultado final del problema</label>
+          <input type="number" id="input-final" step="any"
+                 placeholder="Ingresa el resultado final…" />
+          <span class="answer-hint">Tolerancia: ±0.001 (puede variar)</span>
+        </div>
+
+        <div class="btn-row">
+          <button id="btn-verify" class="btn btn-verify">Verificar</button>
+          <button id="btn-next" class="btn btn-primary" style="display:none;">
+            Siguiente pregunta →
+          </button>
+        </div>
+
+        <!-- Área de retroalimentación -->
+        <div id="feedback-area" class="feedback-area"></div>
+      </div>
+    </div>
+
+    <!-- ── Columna derecha: selección de método ── -->
+    <div class="right-col">
+      <div class="card" style="position:sticky;top:80px;">
+        <div class="card-title">Selecciona la fórmula / método correcto</div>
+        <div id="method-options"></div>
+      </div>
+    </div>
+
+  </div><!-- /question-body -->
+</div><!-- /screen-question -->
+
+
+<!-- ══════════════════════════════════════════════════════════
+     PANTALLA 4: Fin de nivel
+══════════════════════════════════════════════════════════ -->
+<div id="screen-level-end" class="screen">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);">
+    <div class="end-card">
+      <div class="end-icon">🏁</div>
+      <h2 id="end-level-name">Nivel completado</h2>
+
+      <div class="score-display">
+        <span id="end-score">0</span>
+        <span>/ <span id="end-max">0</span> pts</span>
+      </div>
+
+      <div id="end-message" class="end-message"></div>
+
+      <!-- Desglose por pregunta -->
+      <details class="breakdown-details" open>
+        <summary>Desglose por pregunta</summary>
+        <div id="end-breakdown"></div>
+      </details>
+
+      <div id="end-actions" style="margin-top:1rem;"></div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     PANTALLA 5: Resultados finales
+══════════════════════════════════════════════════════════ -->
+<div id="screen-final" class="screen">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;">
+    <div class="final-card">
+      <h2>🎓 Resultados Finales</h2>
+
+      <table class="results-table">
+        <thead>
+          <tr><th>Nivel</th><th>Puntaje</th><th>Estado</th></tr>
+        </thead>
+        <tbody id="final-table-body"></tbody>
+      </table>
+
+      <div class="final-summary">
+        <div>
+          <div style="font-size:.8rem;color:var(--text-muted);margin-bottom:.2rem;">Total acumulado</div>
+          <div id="final-total" class="final-total" style="font-size:1.3rem;font-weight:700;color:var(--uanl-blue);"></div>
+        </div>
+        <div style="text-align:center;">
+          <div id="final-grade" class="grade">?</div>
+          <div id="final-grade-label" style="font-size:.8rem;color:var(--text-muted);margin-top:.3rem;"></div>
+        </div>
+      </div>
+
+      <div style="display:flex;gap:.8rem;flex-direction:column;">
+        <button class="btn btn-primary" onclick="Game.startGame()">Jugar de nuevo</button>
+        <button class="btn btn-secondary" onclick="location.reload()">Volver al inicio</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     Scripts
+══════════════════════════════════════════════════════════ -->
+<script src="js/questions.js"></script>
+<script src="js/game.js"></script>
+
+</body>
+</html>
