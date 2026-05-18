@@ -15,6 +15,80 @@ const Game = (() => {
     isRetry: false
   };
 
+  // ── Temporizador ───────────────────────────────────────────
+  let timerInterval = null;
+  let timeLeft      = 0;
+  let timeLimit     = 0;
+
+  function startTimer() {
+    stopTimer();
+    timeLimit = LEVELS[state.currentLevelIdx].timeLimit;
+    timeLeft  = timeLimit;
+    updateTimerDisplay();
+    timerInterval = setInterval(tickTimer, 1000);
+  }
+
+  function stopTimer() {
+    if (timerInterval !== null) {
+      clearInterval(timerInterval);
+      timerInterval = null;
+    }
+  }
+
+  function tickTimer() {
+    timeLeft = Math.max(0, timeLeft - 1);
+    updateTimerDisplay();
+    if (timeLeft === 0) {
+      stopTimer();
+      handleTimeUp();
+    }
+  }
+
+  function updateTimerDisplay() {
+    const el = $('hdr-timer');
+    if (!el) return;
+    const m = Math.floor(timeLeft / 60);
+    const s = timeLeft % 60;
+    el.textContent = `⏱ ${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+    const ratio = timeLimit > 0 ? timeLeft / timeLimit : 1;
+    el.className = 'hdr-timer';
+    if (ratio <= 0.10)      el.classList.add('timer-danger');
+    else if (ratio <= 0.25) el.classList.add('timer-warning');
+  }
+
+  function handleTimeUp() {
+    showToast('⏱ ¡Tiempo agotado!');
+    if (!state.answered) {
+      state.answered = true;
+      $('btn-verify').disabled = true;
+      $('btn-next').style.display = 'none';
+      const s = LEVELS[state.currentLevelIdx].scoring;
+      state.questionResults.push({
+        num: state.currentQuestionIdx + 1,
+        methodOk: false, intermediateOk: false, finalOk: false,
+        earned: 0,
+        maxPts: s.method + s.intermediate + s.final,
+        timeout: true
+      });
+      const fb = $('feedback-area');
+      fb.className = 'feedback-area has-feedback wrong';
+      fb.innerHTML = `<div class="feedback-row ko">⏱ Tiempo agotado — problema sin responder.</div>`;
+    }
+    setTimeout(() => showLevelEnd(), 2000);
+  }
+
+  function formatTime(totalSecs) {
+    const m = Math.floor(totalSecs / 60);
+    const s = totalSecs % 60;
+    return s > 0 ? `${m} min ${s} seg` : `${m} min`;
+  }
+
+  function timeToMmSs(totalSecs) {
+    const m = Math.floor(totalSecs / 60);
+    const s = totalSecs % 60;
+    return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  }
+
   // ── Utilidades ─────────────────────────────────────────────
   function shuffle(arr) {
     const a = [...arr];
@@ -75,17 +149,20 @@ const Game = (() => {
       ? `Necesitas ${level.threshold} de ${level.maxPoints} puntos para avanzar.`
       : `Nivel final — sin umbral. Tu puntaje total determina tu calificación.`;
 
+    $('intro-time').textContent =
+      `⏱ Tiempo límite: ${formatTime(level.timeLimit)}`;
+
     // Detalle de puntuación
     const s = level.scoring;
     $('intro-scoring').textContent =
-      `Puntuación por pregunta: Método +${s.method} pt${s.method>1?'s':''} · ` +
+      `Puntuación por problema: Método +${s.method} pt${s.method>1?'s':''} · ` +
       `Valor intermedio +${s.intermediate} pt${s.intermediate>1?'s':''} · ` +
       `Resultado final +${s.final} pt${s.final>1?'s':''}`;
 
     showScreen('screen-level-intro');
   }
 
-  // ── Pregunta ───────────────────────────────────────────────
+  // ── Problema ───────────────────────────────────────────────
   function loadQuestion() {
     const level = LEVELS[state.currentLevelIdx];
     const q = state.levelQuestions[state.currentQuestionIdx];
@@ -146,6 +223,9 @@ const Game = (() => {
     $('btn-next').style.display = 'none';
 
     showScreen('screen-question');
+
+    // Arrancar temporizador solo en la primera problema del nivel
+    if (state.currentQuestionIdx === 0) startTimer();
   }
 
   // ── Verificar ──────────────────────────────────────────────
@@ -221,7 +301,7 @@ const Game = (() => {
         ${finalOk ? 'Correcto' : `Incorrecto — esperado <em>${q.finalValue}</em> (tol. ±${tolerance})`}
         (${finalOk ? '+' + scoring.final : '0'} pt${scoring.final > 1 ? 's' : ''})
       </div>
-      <div class="feedback-earned">Puntos en esta pregunta: <strong>${earned}</strong> / ${scoring.method + scoring.intermediate + scoring.final}</div>
+      <div class="feedback-earned">Puntos en esta problema: <strong>${earned}</strong> / ${scoring.method + scoring.intermediate + scoring.final}</div>
       <details class="explanation">
         <summary>Ver explicación del procedimiento</summary>
         <div class="explanation-body">${q.explanation}</div>
@@ -240,7 +320,7 @@ const Game = (() => {
     fb.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
   }
 
-  // ── Siguiente pregunta o fin de nivel ──────────────────────
+  // ── Siguiente problema o fin de nivel ──────────────────────
   function nextQuestion() {
     state.currentQuestionIdx++;
     if (state.currentQuestionIdx < state.levelQuestions.length) {
@@ -252,9 +332,14 @@ const Game = (() => {
 
   // ── Fin de nivel ───────────────────────────────────────────
   function showLevelEnd() {
+    stopTimer();
     const level = LEVELS[state.currentLevelIdx];
     const score = state.levelScore;
     const passed = level.threshold === null || score >= level.threshold;
+
+    const used  = level.timeLimit - timeLeft;
+    $('end-time').textContent =
+      `⏱ Tiempo utilizado: ${timeToMmSs(used)} de ${timeToMmSs(level.timeLimit)}`;
 
     // Guardar resultado: sustituir entrada anterior del mismo nivel si existe
     const existing = state.totalLevelScores.findIndex(e => e.level === level.id);
@@ -266,7 +351,7 @@ const Game = (() => {
     $('end-score').textContent = score;
     $('end-max').textContent = level.maxPoints;
 
-    // ── Desglose por pregunta ──
+    // ── Desglose por problema ──
     const s = level.scoring;
     const desglose = state.questionResults.map(r => `
       <tr>
@@ -331,6 +416,7 @@ const Game = (() => {
   }
 
   function goToMenu() {
+    stopTimer();
     showScreen('screen-welcome');
   }
 

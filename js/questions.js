@@ -1,7 +1,3 @@
-// ============================================================
-//  BANCO DE PREGUNTAS — Métodos Numéricos Quiz
-//  Tolerancia global configurable (puede cambiarse por nivel)
-// ============================================================
 
 const TOLERANCE = 0.001;
 
@@ -9,57 +5,57 @@ const TOLERANCE = 0.001;
 const METHOD_INFO = {
   interpolacion_lineal: {
     label: "Interpolación Lineal",
-    formula: "f(x) = f(x₀) + [(f(x₁)−f(x₀))/(x₁−x₀)]·(x−x₀)",
-    intermediateLabel: "h = x₁ − x₀"
+    formula: "g(x) = f(b) − f(a) / (b − a) · (x − a) + f(a)",
+    intermediateLabel: "b − a"
   },
   newton_adelante: {
     label: "Newton hacia Adelante",
-    formula: "f(x) = f₀ + s·Δf₀ + s(s−1)/2!·Δ²f₀ + …",
-    intermediateLabel: "s = (x − x₀) / h"
+    formula: "g(x) = yᵢ + Δ'f(xᵢ)·S + Δ²f(xᵢ)·S(S−1)/2! + …",
+    intermediateLabel: "S = (x − xᵢ) / h"
   },
   newton_atras: {
     label: "Newton hacia Atrás",
-    formula: "f(x) = fₙ + p·∇fₙ + p(p+1)/2!·∇²fₙ + …",
-    intermediateLabel: "p = (x − xₙ) / h"
+    formula: "g(x) = yᵢ + ∇'f(xᵢ)·S + ∇²f(xᵢ)·S(S+1)/2! + …",
+    intermediateLabel: "S = (x − xᵢ) / h"
   },
   lagrange: {
-    label: "Interpolación de Lagrange",
-    formula: "f(x) = Σ Lᵢ(x)·f(xᵢ)",
+    label: "Lagrange",
+    formula: "g(x) = Σ yᵢ · Π (x − xⱼ) / (xᵢ − xⱼ)",
     intermediateLabel: "L₀(x) — primer término base evaluado en x"
   },
   biseccion: {
-    label: "Bisección",
-    formula: "xᵣ = (a + b) / 2",
-    intermediateLabel: "xᵣ = (a + b) / 2  (1ª iteración)"
+    label: "Bisectriz",
+    formula: "x = (a + b) / 2",
+    intermediateLabel: "x = (a + b) / 2  (1ª iteración)"
   },
   falsa_posicion: {
-    label: "Falsa Posición (Regula Falsi)",
-    formula: "xᵣ = b − f(b)·(a−b) / (f(a)−f(b))",
-    intermediateLabel: "xᵣ  (1ª iteración, fórmula Regula Falsi)"
+    label: "Falsa Posición ó Regula – Falsi (Latín)",
+    formula: "x = a − f(a)·(b−a) / (f(b)−f(a))",
+    intermediateLabel: "x  (1ª iteración, fórmula Regula Falsi)"
   },
   newton_raphson: {
-    label: "Newton-Raphson",
-    formula: "x₁ = x₀ − f(x₀)/f'(x₀)",
-    intermediateLabel: "f'(x₀) — derivada evaluada en x₀"
+    label: "Newton – Raphson",
+    formula: "xᵢ₊₁ = xᵢ − f(xᵢ) / f'(xᵢ)",
+    intermediateLabel: "f'(xᵢ) — derivada evaluada en xᵢ"
   },
   secante: {
-    label: "Método de la Secante",
-    formula: "x₂ = x₁ − f(x₁)·(x₀−x₁)/(f(x₀)−f(x₁))",
+    label: "Secante",
+    formula: "Xᵢ₊₁ = xᵢ₊₁ − f(xᵢ₊₁)·(xᵢ₊₁ − xᵢ) / (f(xᵢ₊₁) − f(xᵢ))",
     intermediateLabel: "f(x₁) − f(x₀)  (diferencia de evaluaciones)"
   },
   trapecio: {
-    label: "Regla del Trapecio",
-    formula: "∫ ≈ h/2·[f(x₀) + 2f(x₁) + … + 2f(xₙ₋₁) + f(xₙ)]",
+    label: "Regla Trapezoidal",
+    formula: "I = h/2·[f(a) + 2Σf(a+ih) + f(b)]",
     intermediateLabel: "h = (b − a) / n"
   },
   simpson13: {
-    label: "Regla de Simpson 1/3",
-    formula: "∫ ≈ h/3·[f₀ + 4f₁ + 2f₂ + 4f₃ + … + fₙ]  (n par)",
+    label: "Regla de 1/3 de Simpson",
+    formula: "I = h/3·[f(a) + 4Σf(a+ih)|impar + 2Σf(a+ih)|par + f(b)]  (n par)",
     intermediateLabel: "h = (b − a) / n"
   },
   simpson38: {
-    label: "Regla de Simpson 3/8",
-    formula: "∫ ≈ 3h/8·[f₀ + 3f₁ + 3f₂ + 2f₃ + … + fₙ]  (n múlt. 3)",
+    label: "Regla de 3/8 de Simpson",
+    formula: "I = 3h/8·[f(a) + 3Σf(a+ih) + f(b)]  (n múlt. de 3)",
     intermediateLabel: "h = (b − a) / n"
   },
   gauss_eliminacion: {
@@ -68,23 +64,23 @@ const METHOD_INFO = {
     intermediateLabel: "m₂₁ = a₂₁ / a₁₁  (multiplicador 1ª columna)"
   },
   gauss_jordan: {
-    label: "Gauss-Jordan",
+    label: "Gauss – Jordán",
     formula: "m₂₁ = a₂₁/a₁₁  →  reducción a identidad",
     intermediateLabel: "m₂₁ = a₂₁ / a₁₁  (multiplicador 1ª operación)"
   },
   gauss_seidel: {
-    label: "Gauss-Seidel",
+    label: "Gauss – Seidel",
     formula: "xᵢ⁽ᵏ⁺¹⁾ = (bᵢ − Σ aᵢⱼxⱼ) / aᵢᵢ  (valores más recientes)",
     intermediateLabel: "x₁⁽¹⁾ — primera actualización de x₁"
   },
   euler: {
-    label: "Método de Euler",
-    formula: "y₁ = y₀ + k₁,  k₁ = h·f(x₀,y₀)",
-    intermediateLabel: "k₁ = h · f(x₀, y₀)"
+    label: "Euler hacia Adelante",
+    formula: "yₙ₊₁ = yₙ + h·f(yₙ, tₙ)",
+    intermediateLabel: "h·f(xₙ, yₙ) — incremento"
   },
   runge_kutta: {
-    label: "Runge-Kutta 4º Orden",
-    formula: "y₁ = y₀ + (k₁+2k₂+2k₃+k₄)/6",
+    label: "Runge – Kutta 4to. Orden",
+    formula: "yₙ₊₁ = yₙ + 1/6·(k₁ + 2k₂ + 2k₃ + k₄)",
     intermediateLabel: "k₁ = h · f(x₀, y₀)"
   }
 };
@@ -97,6 +93,7 @@ const LEVELS = [
     description: "Interpolación Lineal y Diferencias Finitas de Newton. Identifica el método y calcula el parámetro de interpolación.",
     threshold: 6,
     maxPoints: 15,
+    timeLimit: 1200,            // 20 min — 4 min/problema
     scoring: { method: 1, intermediate: 1, final: 1 },
     questions: []   // se llena abajo
   },
@@ -106,6 +103,7 @@ const LEVELS = [
     description: "Raíces de ecuaciones: Bisección, Newton-Raphson y Falsa Posición. Los distractores son más cercanos.",
     threshold: 10,
     maxPoints: 18,
+    timeLimit: 1800,            // 30 min — 5 min/problema
     scoring: { method: 1, intermediate: 1, final: 1 },
     questions: []
   },
@@ -115,6 +113,7 @@ const LEVELS = [
     description: "Integración numérica (Trapecio, Simpson 1/3 y 3/8) y sistemas de ecuaciones (Gauss-Seidel, Eliminación Gaussiana).",
     threshold: 15,
     maxPoints: 35,
+    timeLimit: 2700,            // 45 min — ~6.5 min/problema
     scoring: { method: 1, intermediate: 2, final: 2 },
     questions: []
   },
@@ -124,6 +123,7 @@ const LEVELS = [
     description: "EDO (Euler, Runge-Kutta) e interpolación avanzada (Newton Adelante/Atrás, Lagrange). Contextos de ingeniería.",
     threshold: 20,
     maxPoints: 40,
+    timeLimit: 3600,            // 60 min — 7.5 min/problema
     scoring: { method: 1, intermediate: 2, final: 2 },
     questions: []
   },
@@ -133,13 +133,14 @@ const LEVELS = [
     description: "Todos los métodos. Problemas multietapa de alta complejidad. Tu puntaje total determina la calificación final.",
     threshold: null,
     maxPoints: 80,
+    timeLimit: 5400,            // 90 min — 9 min/problema
     scoring: { method: 2, intermediate: 3, final: 3 },
     questions: []
   }
 ];
 
 // ============================================================
-//  NIVEL 1 — 5 preguntas (Interp. Lineal, Newton Adelante/Atrás)
+//  NIVEL 1 — 5 problemas (Interp. Lineal, Newton Adelante/Atrás)
 // ============================================================
 LEVELS[0].questions = [
   {
@@ -163,8 +164,8 @@ LEVELS[0].questions = [
     tolerance: TOLERANCE,
     explanation: `
       <strong>Método correcto:</strong> Interpolación Lineal.<br>
-      <strong>Valor intermedio:</strong> h = x₁ − x₀ = 5 − 1 = <em>4</em>.<br>
-      <strong>Resultado:</strong> f(3) = 2 + (10−2)/(5−1)·(3−1) = 2 + 2·2 = <em>6</em>.`
+      <strong>Valor intermedio:</strong> b − a = 5 − 1 = <em>4</em>.<br>
+      <strong>Resultado:</strong> g(3) = f(b)−f(a)/(b−a)·(x−a)+f(a) = 2 + (10−2)/(5−1)·(3−1) = <em>6</em>.`
   },
   {
     id: "1-2",
@@ -187,9 +188,9 @@ LEVELS[0].questions = [
     tolerance: TOLERANCE,
     explanation: `
       <strong>Método correcto:</strong> Newton hacia Adelante (punto cerca del inicio).<br>
-      Δf₀=2, Δ²f₀=2, Δ³f₀=0.<br>
-      <strong>s</strong> = (0.5−0)/1 = <em>0.5</em>.<br>
-      f(0.5) = 1 + 0.5·2 + [0.5·(−0.5)/2]·2 = 1 + 1 − 0.25 = <em>1.75</em>.`
+      Δ'f(x₀)=2, Δ²f(x₀)=2, Δ³f(x₀)=0.<br>
+      <strong>S</strong> = (x−xᵢ)/h = (0.5−0)/1 = <em>0.5</em>.<br>
+      g(0.5) = 1 + 0.5·2 + [0.5·(−0.5)/2]·2 = 1 + 1 − 0.25 = <em>1.75</em>.`
   },
   {
     id: "1-3",
@@ -212,9 +213,9 @@ LEVELS[0].questions = [
     tolerance: TOLERANCE,
     explanation: `
       <strong>Método correcto:</strong> Newton hacia Atrás (punto cerca del final).<br>
-      ∇f₃=6, ∇²f₃=2, ∇³f₃=0.<br>
-      <strong>p</strong> = (2.5−3)/1 = <em>−0.5</em>.<br>
-      f(2.5) = 13 + (−0.5)·6 + [(−0.5)·(0.5)/2]·2 = 13−3−0.25 = <em>9.75</em>.`
+      ∇'f(xᵢ)=6, ∇²f(xᵢ)=2, ∇³f(xᵢ)=0.<br>
+      <strong>S</strong> = (x−xᵢ)/h = (2.5−3)/1 = <em>−0.5</em>.<br>
+      g(2.5) = 13 + (−0.5)·6 + [(−0.5)·(0.5)/2]·2 = 13−3−0.25 = <em>9.75</em>.`
   },
   {
     id: "1-4",
@@ -237,8 +238,8 @@ LEVELS[0].questions = [
     tolerance: TOLERANCE,
     explanation: `
       <strong>Método correcto:</strong> Interpolación Lineal (solo 2 puntos dados).<br>
-      h = 2 − 0 = <em>2</em>.<br>
-      f(1.5) = 5 + [(9−5)/2]·1.5 = 5 + 2·1.5 = <em>8</em>.`
+      b − a = 2 − 0 = <em>2</em>.<br>
+      g(1.5) = f(b)−f(a)/(b−a)·(x−a)+f(a) = 5 + [(9−5)/2]·1.5 = <em>8</em>.`
   },
   {
     id: "1-5",
@@ -261,14 +262,14 @@ LEVELS[0].questions = [
     tolerance: TOLERANCE,
     explanation: `
       <strong>Método correcto:</strong> Newton hacia Adelante.<br>
-      Δf₀=4, Δ²f₀=2, Δ³f₀=0.<br>
-      s = (1.5−1)/1 = <em>0.5</em>.<br>
-      f(1.5) = 3 + 0.5·4 + [0.5·(−0.5)/2]·2 = 3+2−0.25 = <em>4.75</em>.`
+      Δ'f(x₀)=4, Δ²f(x₀)=2, Δ³f(x₀)=0.<br>
+      S = (x−xᵢ)/h = (1.5−1)/1 = <em>0.5</em>.<br>
+      g(1.5) = 3 + 0.5·4 + [0.5·(−0.5)/2]·2 = 3+2−0.25 = <em>4.75</em>.`
   }
 ];
 
 // ============================================================
-//  NIVEL 2 — 6 preguntas (Bisección, Newton-Raphson, Falsa Posición)
+//  NIVEL 2 — 6 problemas (Bisección, Newton-Raphson, Falsa Posición)
 // ============================================================
 LEVELS[1].questions = [
   {
@@ -282,10 +283,10 @@ LEVELS[1].questions = [
     finalValue: 1.375,           // xr después de 3 iter
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Bisección (se da intervalo con cambio de signo).<br>
-      It.1: xᵣ=(1+2)/2=<em>1.5</em>, f(1.5)=0.25>0 → [1,1.5].<br>
-      It.2: xᵣ=1.25, f(1.25)=−0.4375<0 → [1.25,1.5].<br>
-      It.3: xᵣ=<em>1.375</em>, f(1.375)=−0.109<0 → [1.375,1.5].`
+      <strong>Método correcto:</strong> Bisectriz (se da intervalo con cambio de signo).<br>
+      It.1: x=(a+b)/2=(1+2)/2=<em>1.5</em>, f(1.5)=0.25>0 → [1,1.5].<br>
+      It.2: x=1.25, f(1.25)=−0.4375<0 → [1.25,1.5].<br>
+      It.3: x=<em>1.375</em>, f(1.375)=−0.109<0 → [1.375,1.5].`
   },
   {
     id: "2-2",
@@ -298,9 +299,9 @@ LEVELS[1].questions = [
     finalValue: 1.75,            // x₁ = 2 − 1/4
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Newton-Raphson (punto inicial y función diferenciable).<br>
-      f'(x) = 2x → f'(2) = <em>4</em>.<br>
-      x₁ = 2 − (4−3)/4 = 2 − 0.25 = <em>1.75</em>.`
+      <strong>Método correcto:</strong> Newton – Raphson (punto inicial y función diferenciable).<br>
+      f'(xᵢ) = 2x → f'(x₀) = <em>4</em>.<br>
+      xᵢ₊₁ = x₀ − f(x₀)/f'(x₀) = 2 − (4−3)/4 = <em>1.75</em>.`
   },
   {
     id: "2-3",
@@ -314,8 +315,8 @@ LEVELS[1].questions = [
     finalValue: 2.2,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Falsa Posición (usa los valores de f para ponderar).<br>
-      xᵣ = 3 − 4·(2−3)/(−1−4) = 3 − 4·(−1)/(−5) = 3 − 0.8 = <em>2.2</em>.`
+      <strong>Método correcto:</strong> Falsa Posición ó Regula – Falsi (Latín).<br>
+      x = a − f(a)·(b−a)/(f(b)−f(a)) = 2 − (−1)·(3−2)/(4−(−1)) = 2 + 0.2 = <em>2.2</em>.`
   },
   {
     id: "2-4",
@@ -328,9 +329,9 @@ LEVELS[1].questions = [
     finalValue: 2.1,             // x₁ = 2 − (−1)/10
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Newton-Raphson.<br>
-      f(2)=8−4−5=−1. f'(x)=3x²−2 → f'(2)=12−2=<em>10</em>.<br>
-      x₁ = 2 − (−1)/10 = <em>2.1</em>.`
+      <strong>Método correcto:</strong> Newton – Raphson.<br>
+      f(x₀)=8−4−5=−1. f'(xᵢ)=3x²−2 → f'(x₀)=12−2=<em>10</em>.<br>
+      xᵢ₊₁ = x₀ − f(x₀)/f'(x₀) = 2 − (−1)/10 = <em>2.1</em>.`
   },
   {
     id: "2-5",
@@ -344,10 +345,10 @@ LEVELS[1].questions = [
     finalValue: 1.625,           // xr después de 3 iter
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Bisección.<br>
-      It.1: xᵣ=<em>1.5</em>, f(1.5)=−0.125<0 → [1.5,2].<br>
-      It.2: xᵣ=1.75, f(1.75)=1.609>0 → [1.5,1.75].<br>
-      It.3: xᵣ=<em>1.625</em>, f(1.625)=0.666>0 → [1.5,1.625].`
+      <strong>Método correcto:</strong> Bisectriz.<br>
+      It.1: x=(a+b)/2=<em>1.5</em>, f(1.5)=−0.125<0 → [1.5,2].<br>
+      It.2: x=1.75, f(1.75)=1.609>0 → [1.5,1.75].<br>
+      It.3: x=<em>1.625</em>, f(1.625)=0.666>0 → [1.5,1.625].`
   },
   {
     id: "2-6",
@@ -361,13 +362,13 @@ LEVELS[1].questions = [
     finalValue: 2.4,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Falsa Posición.<br>
-      xᵣ = 3 − 3·(2−3)/(−2−3) = 3 − 3·(−1)/(−5) = 3 − 0.6 = <em>2.4</em>.`
+      <strong>Método correcto:</strong> Falsa Posición ó Regula – Falsi (Latín).<br>
+      x = a − f(a)·(b−a)/(f(b)−f(a)) = 2 − (−2)·(3−2)/(3−(−2)) = 2 + 0.4 = <em>2.4</em>.`
   }
 ];
 
 // ============================================================
-//  NIVEL 3 — 7 preguntas (Trapecio, Simpson 1/3 y 3/8, Gauss, Seidel)
+//  NIVEL 3 — 7 problemas (Trapecio, Simpson 1/3 y 3/8, Gauss, Seidel)
 // ============================================================
 LEVELS[2].questions = [
   {
@@ -381,7 +382,7 @@ LEVELS[2].questions = [
     finalValue: 2.75,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método:</strong> Trapecio. h=(2−0)/4=<em>0.5</em>.<br>
+      <strong>Método:</strong> Regla Trapezoidal. h=(b−a)/n=(2−0)/4=<em>0.5</em>.<br>
       f: 0, 0.25, 1, 2.25, 4.<br>
       T = 0.5/2·(0+2·0.25+2·1+2·2.25+4) = 0.25·11 = <em>2.75</em>.`
   },
@@ -396,9 +397,9 @@ LEVELS[2].questions = [
     finalValue: 0.25,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método:</strong> Simpson 1/3 (n par, máxima precisión para cúbicas). h=<em>0.25</em>.<br>
+      <strong>Método:</strong> Regla de 1/3 de Simpson (n par). h=(b−a)/n=<em>0.25</em>.<br>
       f: 0, 0.015625, 0.125, 0.421875, 1.<br>
-      S = 0.25/3·(0+4·0.015625+2·0.125+4·0.421875+1) = 0.0833·3 = <em>0.25</em>.`
+      I = h/3·[f(a)+4Σf|impar+2Σf|par+f(b)] = 0.25/3·(0+4·0.015625+2·0.125+4·0.421875+1) = <em>0.25</em>.`
   },
   {
     id: "3-3",
@@ -410,9 +411,9 @@ LEVELS[2].questions = [
     finalValue: 9,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método:</strong> Simpson 3/8 (n múltiplo de 3). h=<em>1</em>.<br>
+      <strong>Método:</strong> Regla de 3/8 de Simpson (n múltiplo de 3). h=(b−a)/n=<em>1</em>.<br>
       f: 0, 1, 4, 9.<br>
-      S = 3·1/8·(0+3·1+3·4+9) = 0.375·24 = <em>9</em>.`
+      I = 3h/8·[f(a)+3Σf(a+ih)+f(b)] = 3·1/8·(0+3·1+3·4+9) = 0.375·24 = <em>9</em>.`
   },
   {
     id: "3-4",
@@ -444,9 +445,9 @@ LEVELS[2].questions = [
     finalValue: 1.7708,          // x₁ tras 2 iter (≈ 1.7708)
     tolerance: 0.001,
     explanation: `
-      <strong>Método:</strong> Gauss-Seidel.<br>
-      It.1: x=(9−0)/4=<em>2.25</em>; y=(8−2.25)/3=1.9167.<br>
-      It.2: x=(9−1.9167)/4=<em>1.7708</em>; y=2.0764.`
+      <strong>Método:</strong> Gauss – Seidel.<br>
+      It.1: x₁⁽¹⁾=(9−0)/4=<em>2.25</em>; x₂⁽¹⁾=(8−2.25)/3=1.9167.<br>
+      It.2: x₁⁽²⁾=(9−1.9167)/4=<em>1.7708</em>; x₂⁽²⁾=2.0764.`
   },
   {
     id: "3-6",
@@ -458,7 +459,7 @@ LEVELS[2].questions = [
     finalValue: 10.75,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método:</strong> Trapecio. h=<em>0.5</em>.<br>
+      <strong>Método:</strong> Regla Trapezoidal. h=(b−a)/n=<em>0.5</em>.<br>
       f(x): 2, 3.25, 5, 7.25, 10.<br>
       T = 0.5/2·(2+2·3.25+2·5+2·7.25+10) = 0.25·43 = <em>10.75</em>.`
   },
@@ -472,14 +473,14 @@ LEVELS[2].questions = [
     finalValue: 4.0,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método:</strong> Simpson 1/3. h=<em>0.5</em>.<br>
+      <strong>Método:</strong> Regla de 1/3 de Simpson (n par). h=(b−a)/n=<em>0.5</em>.<br>
       f: 0, 0.125, 1, 3.375, 8.<br>
-      S = 0.5/3·(0+4·0.125+2·1+4·3.375+8) = 0.1667·24 = <em>4.0</em>.`
+      I = h/3·[f(a)+4Σf|impar+2Σf|par+f(b)] = 0.5/3·(0+4·0.125+2·1+4·3.375+8) = <em>4.0</em>.`
   }
 ];
 
 // ============================================================
-//  NIVEL 4 — 8 preguntas (Euler, RK4, Newton Adelante/Atrás, Lagrange)
+//  NIVEL 4 — 8 problemas (Euler, RK4, Newton Adelante/Atrás, Lagrange)
 // ============================================================
 LEVELS[3].questions = [
   {
@@ -494,9 +495,9 @@ LEVELS[3].questions = [
     finalValue: 1.1,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método:</strong> Euler (un paso, sin pendientes auxiliares).<br>
-      k₁ = 0.1·f(0,1) = 0.1·(0+1) = <em>0.1</em>.<br>
-      y₁ = 1 + 0.1 = <em>1.1</em>.`
+      <strong>Método:</strong> Euler hacia Adelante (un paso, sin pendientes auxiliares).<br>
+      h·f(xₙ,yₙ) = 0.1·f(0,1) = 0.1·(0+1) = <em>0.1</em>.<br>
+      yₙ₊₁ = yₙ + h·f(yₙ,tₙ) = 1 + 0.1 = <em>1.1</em>.`
   },
   {
     id: "4-2",
@@ -509,9 +510,9 @@ LEVELS[3].questions = [
     finalValue: 1.1103,          // y₁ ≈ 1.110342
     tolerance: 0.001,
     explanation: `
-      <strong>Método:</strong> Runge-Kutta 4º orden (mayor precisión).<br>
-      k₁=0.1·1=<em>0.1</em>, k₂=0.11, k₃=0.1105, k₄=0.12105.<br>
-      y₁ = 1+(0.1+2·0.11+2·0.1105+0.12105)/6 ≈ <em>1.1103</em>.`
+      <strong>Método:</strong> Runge – Kutta 4to. Orden (mayor precisión).<br>
+      k₁=h·f(x₀,y₀)=0.1·1=<em>0.1</em>, k₂=0.11, k₃=0.1105, k₄=0.12105.<br>
+      yₙ₊₁ = yₙ + 1/6·(k₁+2k₂+2k₃+k₄) = 1+(0.1+0.22+0.221+0.12105)/6 ≈ <em>1.1103</em>.`
   },
   {
     id: "4-3",
@@ -528,9 +529,9 @@ LEVELS[3].questions = [
     finalValue: 1.25,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método:</strong> Newton Adelante. Δf₀=1, Δ²f₀=2, Δ³f₀=0.<br>
-      s = (0.5−0)/1 = <em>0.5</em>.<br>
-      f(0.5)=1+0.5·1+[0.5·(−0.5)/2]·2=1+0.5−0.25=<em>1.25</em>.`
+      <strong>Método:</strong> Newton hacia Adelante. Δ'f(x₀)=1, Δ²f(x₀)=2, Δ³f(x₀)=0.<br>
+      S = (x−xᵢ)/h = (0.5−0)/1 = <em>0.5</em>.<br>
+      g(0.5)=1+0.5·1+[0.5·(−0.5)/2]·2=1+0.5−0.25=<em>1.25</em>.`
   },
   {
     id: "4-4",
@@ -547,9 +548,9 @@ LEVELS[3].questions = [
     finalValue: 13.25,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método:</strong> Newton Atrás. ∇f₄=7, ∇²f₄=2, ∇³f₄=0.<br>
-      p = (3.5−4)/1 = <em>−0.5</em>.<br>
-      f(3.5)=17+(−0.5)·7+[(−0.5)·(0.5)/2]·2=17−3.5−0.25=<em>13.25</em>.`
+      <strong>Método:</strong> Newton hacia Atrás. ∇'f(xᵢ)=7, ∇²f(xᵢ)=2, ∇³f(xᵢ)=0.<br>
+      S = (x−xᵢ)/h = (3.5−4)/1 = <em>−0.5</em>.<br>
+      g(3.5)=17+(−0.5)·7+[(−0.5)·(0.5)/2]·2=17−3.5−0.25=<em>13.25</em>.`
   },
   {
     id: "4-5",
@@ -582,9 +583,9 @@ LEVELS[3].questions = [
     finalValue: 2.0,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método:</strong> Euler.<br>
-      k₁ = 0.5·f(0,0) = 0.5·(−2·0+4) = 0.5·4 = <em>2.0</em>.<br>
-      I(0.5) = 0 + 2.0 = <em>2.0</em>.`
+      <strong>Método:</strong> Euler hacia Adelante.<br>
+      h·f(xₙ,yₙ) = 0.5·f(0,0) = 0.5·(−2·0+4) = <em>2.0</em>.<br>
+      yₙ₊₁ = yₙ + h·f(yₙ,tₙ) = 0 + 2.0 = <em>2.0</em>.`
   },
   {
     id: "4-7",
@@ -598,8 +599,8 @@ LEVELS[3].questions = [
     finalValue: 85.499,
     tolerance: 0.01,
     explanation: `
-      <strong>Método:</strong> Runge-Kutta 4°. k₁=<em>−16</em>, k₂=−14.4, k₃=−14.56, k₄=−13.088.<br>
-      T₁=100+(−16+2·(−14.4)+2·(−14.56)+(−13.088))/6 ≈ <em>85.499</em>.`
+      <strong>Método:</strong> Runge – Kutta 4to. Orden. k₁=h·f(x₀,y₀)=<em>−16</em>, k₂=−14.4, k₃=−14.56, k₄=−13.088.<br>
+      yₙ₊₁=yₙ+1/6·(k₁+2k₂+2k₃+k₄)=100+(−16−28.8−29.12−13.088)/6 ≈ <em>85.499</em>.`
   },
   {
     id: "4-8",
@@ -623,7 +624,7 @@ LEVELS[3].questions = [
 ];
 
 // ============================================================
-//  NIVEL 5 — 10 preguntas (todos los métodos, alta complejidad)
+//  NIVEL 5 — 10 problemas (todos los métodos, alta complejidad)
 // ============================================================
 LEVELS[4].questions = [
   {
@@ -638,7 +639,7 @@ LEVELS[4].questions = [
     finalValue: 1.625,
     tolerance: TOLERANCE,
     explanation: `
-      Bisección: It.1 xᵣ=<em>1.5</em> f=−1.625<0→[1.5,2]. It.2 xᵣ=1.75 f=0.359>0→[1.5,1.75]. It.3 xᵣ=<em>1.625</em>.`
+      Bisectriz: It.1 x=(a+b)/2=<em>1.5</em> f=−1.625<0→[1.5,2]. It.2 x=1.75 f=0.359>0→[1.5,1.75]. It.3 x=<em>1.625</em>.`
   },
   {
     id: "5-2",
@@ -651,7 +652,7 @@ LEVELS[4].questions = [
     finalValue: 1.7917,          // x₁ = 2 − 5/24
     tolerance: 0.001,
     explanation: `
-      f(2)=16−8−3=5. f'(x)=4x³−4x → f'(2)=32−8=<em>24</em>. x₁=2−5/24≈<em>1.7917</em>.`
+      Newton – Raphson. f(x₀)=16−8−3=5. f'(xᵢ)=4x³−4x → f'(x₀)=32−8=<em>24</em>. xᵢ₊₁=x₀−f(x₀)/f'(x₀)=2−5/24≈<em>1.7917</em>.`
   },
   {
     id: "5-3",
@@ -663,7 +664,7 @@ LEVELS[4].questions = [
     finalValue: 29.333,
     tolerance: 0.01,
     explanation: `
-      Simpson 1/3. h=<em>1</em>. f: 0,2,6,12,20. S=1/3·(0+8+12+48+20)=88/3≈<em>29.333</em>.`
+      Regla de 1/3 de Simpson. h=(b−a)/n=<em>1</em>. f: 0,2,6,12,20. I=h/3·[f(a)+4Σf|impar+2Σf|par+f(b)]=1/3·(0+8+12+48+20)=88/3≈<em>29.333</em>.`
   },
   {
     id: "5-4",
@@ -676,7 +677,7 @@ LEVELS[4].questions = [
     finalValue: 8.882,
     tolerance: 0.01,
     explanation: `
-      RK4. k₁=<em>9.8</em>, k₂=8.82, k₃=8.918, k₄=8.0164. v₁=(9.8+17.64+17.836+8.0164)/6≈<em>8.882</em>.`
+      Runge – Kutta 4to. Orden. k₁=h·f(x₀,y₀)=<em>9.8</em>, k₂=8.82, k₃=8.918, k₄=8.0164. yₙ₊₁=yₙ+1/6·(k₁+2k₂+2k₃+k₄)=(9.8+17.64+17.836+8.0164)/6≈<em>8.882</em>.`
   },
   {
     id: "5-5",
@@ -690,7 +691,7 @@ LEVELS[4].questions = [
     finalValue: 2,               // x₁ = 2
     tolerance: TOLERANCE,
     explanation: `
-      Gauss-Jordan (lleva a identidad, sin sustitución). m₂₁=1/3≈<em>0.3333</em>. Tras reducción: x=<em>2</em>, y=1.`
+      Gauss – Jordán (lleva a identidad, sin sustitución). m₂₁=a₂₁/a₁₁=1/3≈<em>0.3333</em>. Tras reducción a identidad: x=<em>2</em>, y=1.`
   },
   {
     id: "5-6",
@@ -704,7 +705,7 @@ LEVELS[4].questions = [
     finalValue: 2.0535,
     tolerance: 0.001,
     explanation: `
-      Gauss-Seidel. It.1: x=12/5=<em>2.4</em>; y=1.65. It.2: x=2.07; y=1.7325. It.3: x≈<em>2.0535</em>.`
+      Gauss – Seidel. It.1: x₁⁽¹⁾=12/5=<em>2.4</em>; x₂⁽¹⁾=1.65. It.2: x₁⁽²⁾=2.07; x₂⁽²⁾=1.7325. It.3: x₁⁽³⁾≈<em>2.0535</em>.`
   },
   {
     id: "5-7",
@@ -732,8 +733,9 @@ LEVELS[4].questions = [
     finalValue: 0.6364,
     tolerance: 0.001,
     explanation: `
-      It.1: xᵣ=1−1·(0−1)/(−1−1)=<em>0.5</em>; f(0.5)=−0.375→[0.5,1].
-      It.2: xᵣ=1−1·(0.5−1)/(−0.375−1)≈<em>0.6364</em>.`
+      Falsa Posición ó Regula – Falsi (Latín). x = a−f(a)·(b−a)/(f(b)−f(a)).<br>
+      It.1: x=0−(−1)·(1−0)/(1−(−1))=<em>0.5</em>; f(0.5)=−0.375→[0.5,1].<br>
+      It.2: x=0.5−(−0.375)·(1−0.5)/(1−(−0.375))≈<em>0.6364</em>.`
   },
   {
     id: "5-9",
@@ -750,8 +752,8 @@ LEVELS[4].questions = [
     finalValue: 6,
     tolerance: TOLERANCE,
     explanation: `
-      Newton Adelante, h=2. Δ¹f₀=8, Δ²f₀=8, Δ³=0. s=(1−0)/2=<em>0.5</em>.
-      f(1)=3+0.5·8+[0.5·(−0.5)/2]·8=3+4−1=<em>6</em>.`
+      Newton hacia Adelante, h=2. Δ'f(x₀)=8, Δ²f(x₀)=8, Δ³f(x₀)=0. S=(x−xᵢ)/h=(1−0)/2=<em>0.5</em>.
+      g(1)=3+0.5·8+[0.5·(−0.5)/2]·8=3+4−1=<em>6</em>.`
   },
   {
     id: "5-10",

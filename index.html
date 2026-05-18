@@ -21,15 +21,15 @@
     </p>
 
     <div class="level-preview">
-      <div class="level-chip"><strong>Nivel 1 — Introducción</strong>5 preguntas · umbral 6 pts</div>
-      <div class="level-chip"><strong>Nivel 2 — Aprendiz</strong>6 preguntas · umbral 10 pts</div>
-      <div class="level-chip"><strong>Nivel 3 — Intermedio</strong>7 preguntas · umbral 15 pts</div>
-      <div class="level-chip"><strong>Nivel 4 — Avanzado</strong>8 preguntas · umbral 20 pts</div>
-      <div class="level-chip" style="grid-column:1/-1"><strong>Nivel 5 — Experto</strong>10 preguntas · sin umbral — calificación final</div>
+      <div class="level-chip"><strong>Nivel 1 — Introducción</strong>5 problemas · umbral 6 pts</div>
+      <div class="level-chip"><strong>Nivel 2 — Aprendiz</strong>6 problemas · umbral 10 pts</div>
+      <div class="level-chip"><strong>Nivel 3 — Intermedio</strong>7 problemas · umbral 15 pts</div>
+      <div class="level-chip"><strong>Nivel 4 — Avanzado</strong>8 problemas · umbral 20 pts</div>
+      <div class="level-chip" style="grid-column:1/-1"><strong>Nivel 5 — Experto</strong>10 problemas · sin umbral — calificación final</div>
     </div>
 
     <p style="font-size:.82rem;color:var(--text-muted);margin-bottom:1.2rem;">
-      Cada pregunta tiene <strong>3 componentes</strong>: método correcto, valor intermedio y resultado final.
+      Cada problema tiene <strong>3 componentes</strong>: método correcto, valor intermedio y resultado final.
       La tolerancia de error numérico es ±0.001 por defecto.
     </p>
 
@@ -54,6 +54,7 @@
       <h2 id="intro-level-name"></h2>
       <p id="intro-level-desc"></p>
       <div class="threshold-info" id="intro-threshold"></div>
+      <div class="time-info" id="intro-time"></div>
       <div class="scoring-info" id="intro-scoring"></div>
       <button id="btn-begin-level" class="btn btn-primary" style="width:100%;margin-top:.8rem;">
         ¡Comenzar nivel!
@@ -67,7 +68,7 @@
 
 
 <!-- ══════════════════════════════════════════════════════════
-     PANTALLA 3: Pregunta
+     PANTALLA 3: Problema
 ══════════════════════════════════════════════════════════ -->
 <div id="screen-question" class="screen">
 
@@ -78,6 +79,7 @@
     <span class="hdr-progress-txt" id="hdr-progress">1 / 5</span>
     <div class="hdr-info">
       <span class="hdr-meta" id="hdr-threshold"></span>
+      <span class="hdr-timer" id="hdr-timer">⏱ --:--</span>
       <span class="hdr-score" id="hdr-score">Puntos: 0</span>
     </div>
   </header>
@@ -86,7 +88,7 @@
   <div class="progress-track"><div class="progress-bar-fill" id="progress-bar-fill" style="width:0%"></div></div>
   <div class="progress-label" id="progress-label-txt"></div>
 
-  <!-- Cuerpo de la pregunta -->
+  <!-- Cuerpo de la problema -->
   <div class="question-body">
 
     <!-- ── Columna izquierda: enunciado + respuestas ── -->
@@ -118,7 +120,7 @@
         <div class="btn-row">
           <button id="btn-verify" class="btn btn-verify">Verificar</button>
           <button id="btn-next" class="btn btn-primary" style="display:none;">
-            Siguiente pregunta →
+            Siguiente problema →
           </button>
         </div>
 
@@ -147,6 +149,7 @@
     <div class="end-card">
       <div class="end-icon">🏁</div>
       <h2 id="end-level-name">Nivel completado</h2>
+      <div class="end-time" id="end-time"></div>
 
       <div class="score-display">
         <span id="end-score">0</span>
@@ -155,9 +158,9 @@
 
       <div id="end-message" class="end-message"></div>
 
-      <!-- Desglose por pregunta -->
+      <!-- Desglose por problema -->
       <details class="breakdown-details" open>
-        <summary>Desglose por pregunta</summary>
+        <summary>Desglose por problema</summary>
         <div id="end-breakdown"></div>
       </details>
 
