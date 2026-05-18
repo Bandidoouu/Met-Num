@@ -244,7 +244,7 @@ LEVELS[0].questions = [
   {
     id: "1-5",
     statement: `
-      <p>Tabla equidistante con h = 1:</p>
+      <p>Datos conocidos (h = 1):</p>
       <table class="data-table">
         <tr><th>x</th><td>1</td><td>2</td><td>3</td><td>4</td></tr>
         <tr><th>f(x)</th><td>3</td><td>7</td><td>13</td><td>21</td></tr>
@@ -517,7 +517,7 @@ LEVELS[3].questions = [
   {
     id: "4-3",
     statement: `
-      <p>Tabla equidistante con h = 1:</p>
+      <p>Datos conocidos (h = 1):</p>
       <table class="data-table">
         <tr><th>x</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
         <tr><th>f(x)</th><td>1</td><td>2</td><td>5</td><td>10</td><td>17</td></tr>
@@ -560,7 +560,7 @@ LEVELS[3].questions = [
         <tr><th>x</th><td>0</td><td>1</td><td>2</td></tr>
         <tr><th>f(x)</th><td>1</td><td>3</td><td>7</td></tr>
       </table>
-      <p>Interpola <strong>f(0.5)</strong> usando polinomios base. La tabla no es equidistante en la interpretación del método.</p>`,
+      <p>Interpola <strong>f(0.5)</strong> usando Lagrange.</p>`,
     correctMethod: "lagrange",
     methodOptions: ["newton_adelante", "newton_atras", "lagrange", "euler"],
     intermediateValue: 0.375,    // L₀(0.5) = (0.5−1)(0.5−2)/((0−1)(0−2)) = 0.375
@@ -740,7 +740,7 @@ LEVELS[4].questions = [
   {
     id: "5-9",
     statement: `
-      <p>Tabla equidistante con h = 2:</p>
+      <p>Datos conocidos (h = 2):</p>
       <table class="data-table">
         <tr><th>x</th><td>0</td><td>2</td><td>4</td><td>6</td><td>8</td></tr>
         <tr><th>f(x)</th><td>3</td><td>11</td><td>27</td><td>51</td><td>83</td></tr>
@@ -758,7 +758,7 @@ LEVELS[4].questions = [
   {
     id: "5-10",
     statement: `
-      <p>Puntos (tabla no equidistante):</p>
+      <p>Datos conocidos:</p>
       <table class="data-table">
         <tr><th>x</th><td>0</td><td>1</td><td>3</td><td>4</td></tr>
         <tr><th>f(x)</th><td>2</td><td>4</td><td>14</td><td>22</td></tr>
