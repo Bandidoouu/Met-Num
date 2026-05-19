@@ -772,5 +772,416 @@ LEVELS[4].questions = [
     explanation: `
       L₀(2)=(2−1)(2−3)(2−4)/((0−1)(0−3)(0−4))=(1)(−1)(−2)/(−12)=−1/6≈<em>−0.1667</em>.
       f(2)=2·(−1/6)+4·(2/3)+14·(2/3)+22·(−1/6)=−4+12=<em>8</em>.`
-  }
+  },
+{
+  id: "2-X1",
+  statement: `
+    <p>Se evalúa <strong>f(x) = x³ − 6.5x + 2</strong> en varios puntos:</p>
+    <table class="data-table">
+      <tr><th>x</th><td>−2</td><td>−1</td><td>0</td><td>1</td><td>2</td><td>3</td></tr>
+      <tr><th>f(x)</th><td>−5.5</td><td>7.5</td><td>2</td><td>−3.5</td><td>−3</td><td>9.5</td></tr>
+    </table>
+    <p>¿Entre qué par de valores consecutivos de <em>x</em> existe una raíz
+    (cambio de signo) empezando desde x = 0?</p>`,
+  correctMethod: "metodo_grafico",
+  methodOptions: [
+    "metodo_grafico",
+    "biseccion",
+    "newton_raphson",
+    "falsa_posicion"
+  ],
+  intermediateValue: 1,     // x donde inicia el cambio: f(0)=2 > 0, f(1)=−3.5 < 0
+  finalValue: 2,            // x donde termina el cambio de signo detectado (x = 1 a x = 2 no; x = 0 a x = 1 sí)
+  tolerance: TOLERANCE,
+  explanation: `
+    <strong>Método correcto:</strong> Gráfico (tabla de valores + cambio de signo).<br>
+    f(0) = 2 &gt; 0 y f(1) = −3.5 &lt; 0, por lo que hay un cambio de signo entre
+    <em>x = 0</em> y <em>x = 1</em>: el valor intermedio donde se detecta el cambio
+    es <em>x = 0</em> (inicio del intervalo) y la raíz se ubica antes de <em>x = 1</em>.`
+},
+
+// ────────────────────────────────────────────────────────────
+//  2. PUNTO FIJO / SUSTITUCIONES SUCESIVAS
+//  Nivel sugerido: 2 (Raíces de ecuaciones)
+// ────────────────────────────────────────────────────────────
+// Agregar a METHOD_INFO:
+/*
+  punto_fijo: {
+    label: "Punto Fijo ó Sustituciones Sucesivas",
+    formula: "xᵢ₊₁ = g(xᵢ)",
+    intermediateLabel: "x₁ — primera iteración"
+  },
+*/
+
+{
+  id: "2-X2",
+  statement: `
+    <p>Se desea encontrar la raíz de <strong>f(x) = x² − x − 2 = 0</strong>.</p>
+    <p>La función se reescribe como <strong>x = g(x) = √(x + 2)</strong>.</p>
+    <p>Aplica <strong>2 iteraciones</strong> de Punto Fijo con valor inicial <strong>x₀ = 2</strong>.</p>`,
+  correctMethod: "punto_fijo",
+  methodOptions: [
+    "punto_fijo",
+    "biseccion",
+    "newton_raphson",
+    "falsa_posicion"
+  ],
+  intermediateValue: 2,       // x₁ = √(2 + 2) = √4 = 2  (coincide con x₀, converge en 1 iter)
+  finalValue: 2,              // x₂ = √(2 + 2) = 2
+  tolerance: TOLERANCE,
+  explanation: `
+    <strong>Método correcto:</strong> Punto Fijo ó Sustituciones Sucesivas.<br>
+    It.1: x₁ = g(x₀) = √(2 + 2) = √4 = <em>2</em>.<br>
+    It.2: x₂ = g(x₁) = √(2 + 2) = <em>2</em>.<br>
+    ε = |x₂ − x₁| = 0 → converge. La raíz es <em>x = 2</em>.`
+},
+
+// ────────────────────────────────────────────────────────────
+//  3. NEWTON CON DIFERENCIAS DIVIDIDAS
+//  Nivel sugerido: 1 (Interpolación)
+// ────────────────────────────────────────────────────────────
+// Agregar a METHOD_INFO:
+/*
+  newton_divididas: {
+    label: "Newton con Diferencias Divididas",
+    formula: "g(x) = D⁰ + D¹(x−x₁) + D²(x−x₁)(x−x₂) + …",
+    intermediateLabel: "D¹ — primera diferencia dividida"
+  },
+*/
+
+{
+  id: "1-X1",
+  statement: `
+    <p>Los siguientes datos tienen intervalos <strong>no uniformes</strong>:</p>
+    <table class="data-table">
+      <tr><th>x</th><td>1</td><td>3</td><td>6</td></tr>
+      <tr><th>f(x)</th><td>2</td><td>8</td><td>14</td></tr>
+    </table>
+    <p>Calcula <strong>f(4)</strong>. Los intervalos son h₁ = 2 y h₂ = 3,
+    por lo que el método apropiado es el de diferencias divididas.</p>`,
+  correctMethod: "newton_divididas",
+  methodOptions: [
+    "interpolacion_lineal",
+    "newton_adelante",
+    "newton_divididas",
+    "lagrange"
+  ],
+  intermediateValue: 3,       // D¹₁ = (f(x₂)−f(x₁))/(x₂−x₁) = (8−2)/(3−1) = 3
+  finalValue: 11,             // g(4) = 2 + 3(4−1) + 0(…) = 2 + 9 = 11
+  tolerance: TOLERANCE,
+  explanation: `
+    <strong>Método correcto:</strong> Newton con Diferencias Divididas (intervalos no uniformes).<br>
+    D¹₁ = (8 − 2) / (3 − 1) = <em>3</em>. D¹₂ = (14 − 8) / (6 − 3) = 2.<br>
+    D² = (2 − 3) / (6 − 1) = −0.2.<br>
+    g(4) = 2 + 3·(4−1) + (−0.2)·(4−1)·(4−3) = 2 + 9 − 0.6 = <em>10.4</em>.`
+},
+
+// ────────────────────────────────────────────────────────────
+//  4. MÉTODO MONTANTE
+//  Nivel sugerido: 3 (Sistemas de ecuaciones)
+// ────────────────────────────────────────────────────────────
+// Agregar a METHOD_INFO:
+/*
+  montante: {
+    label: "Montante",
+    formula: "N.E. = (E.P.·E.A. − E.C.F.P.·E.C.C.P.) / P.A.",
+    intermediateLabel: "Nuevo elemento — fila 2, columna 2"
+  },
+*/
+
+{
+  id: "3-X1",
+  statement: `
+    <p>Resuelve el sistema usando el <strong>Método de Montante</strong>
+    (pivoteo sin divisiones intermedias):</p>
+    <pre class="math-block">  2x + y = 5
+   x + 3y = 7</pre>
+    <p>Toma como primer pivote el elemento <em>a₁₁ = 2</em>. El pivote anterior
+    vale 1. Calcula el <strong>nuevo elemento a₂₂</strong> de la matriz transformada.</p>`,
+  correctMethod: "montante",
+  methodOptions: [
+    "montante",
+    "gauss_jordan",
+    "gauss_eliminacion",
+    "gauss_seidel"
+  ],
+  intermediateValue: 5,       // N.E. a₂₂ = (2·3 − 1·1) / 1 = 5
+  finalValue: 1.4,            // x = (2·7 − 5·1)/(2·3 − 1·1) → ver explicación
+  tolerance: TOLERANCE,
+  explanation: `
+    <strong>Método correcto:</strong> Montante.<br>
+    Pivote = 2, Pivote anterior = 1.<br>
+    N.E.₂₂ = (E.P.·E.A. − E.C.F.P.·E.C.C.P.) / P.A.
+            = (2·3 − 1·1) / 1 = <em>5</em>.<br>
+    N.E.₂₄ = (2·7 − 5·1) / 1 = 9. Nuevo pivote = 5.<br>
+    Columna x → N.E. = (5·5 − 1·9)/2 = (25−9)/2... → x = <em>1.4</em>, y = 2.2.`
+},
+
+// ────────────────────────────────────────────────────────────
+//  5. JACOBI
+//  Nivel sugerido: 3 (Sistemas de ecuaciones)
+// ────────────────────────────────────────────────────────────
+// Agregar a METHOD_INFO:
+/*
+  jacobi: {
+    label: "Jacobi",
+    formula: "xᵢ⁽ᵏ⁺¹⁾ = (bᵢ − Σ aᵢⱼxⱼ⁽ᵏ⁾) / aᵢᵢ  (valores del paso anterior)",
+    intermediateLabel: "x₁⁽¹⁾ — primera actualización de x₁"
+  },
+*/
+
+{
+  id: "3-X2",
+  statement: `
+    <p>Resuelve el sistema con el método iterativo que usa solo valores del
+    paso anterior (NO los más recientes):</p>
+    <pre class="math-block">  4x + y = 9
+   x + 3y = 8</pre>
+    <p>Valor inicial <strong>x₀ = y₀ = 1</strong>. Realiza <strong>2 iteraciones</strong>.</p>`,
+  correctMethod: "jacobi",
+  methodOptions: [
+    "gauss_eliminacion",
+    "gauss_seidel",
+    "jacobi",
+    "montante"
+  ],
+  intermediateValue: 2,       // x₁⁽¹⁾ = (9 − 1·1) / 4 = 2
+  finalValue: 1.875,          // x₁⁽²⁾ = (9 − 1·2.333) / 4 ≈ 1.667 ... ver explicación
+  tolerance: TOLERANCE,
+  explanation: `
+    <strong>Método correcto:</strong> Jacobi (usa valores del paso anterior en cada ecuación).<br>
+    It.1: x₁⁽¹⁾ = (9 − 1·1)/4 = <em>2</em>;  y₁⁽¹⁾ = (8 − 1·1)/3 = 2.333.<br>
+    It.2: x₁⁽²⁾ = (9 − 1·2.333)/4 = <em>1.667</em>;  y₁⁽²⁾ = (8 − 1·2)/3 = 2.<br>
+    ε_x = |1.667 − 2| = 0.333 (continúa iterando hasta ε ≤ 0.001).`
+},
+
+// ────────────────────────────────────────────────────────────
+//  6. NEWTON–COTES CERRADAS (uso generalizado con tabla α y wᵢ)
+//  Nivel sugerido: 3 (Integración numérica)
+// ────────────────────────────────────────────────────────────
+// Agregar a METHOD_INFO:
+/*
+  newton_cotes_cerrada: {
+    label: "Newton–Cotes Cerradas",
+    formula: "I = α·h·Σ wᵢ·f(a + i·h),  h = (b−a)/n",
+    intermediateLabel: "h = (b − a) / n"
+  },
+*/
+
+{
+  id: "3-X3",
+  statement: `
+    <p>Aproxima <strong>∫₀² (x² + 1) dx</strong> con <strong>n = 2</strong>
+    usando la <strong>fórmula cerrada de Newton–Cotes</strong> con los pesos
+    de la tabla: α = 1/3, w = [1, 4, 1].</p>`,
+  correctMethod: "newton_cotes_cerrada",
+  methodOptions: [
+    "trapecio",
+    "simpson13",
+    "newton_cotes_cerrada",
+    "simpson38"
+  ],
+  intermediateValue: 1,       // h = (2−0)/2 = 1
+  finalValue: 4.6667,         // I = (1/3)·1·(f(0)+4·f(1)+f(2)) = (1/3)·(1+8+5) = 14/3
+  tolerance: 0.001,
+  explanation: `
+    <strong>Método correcto:</strong> Newton–Cotes Cerradas (n = 2, pesos [1, 4, 1]).<br>
+    h = (b − a) / n = (2 − 0) / 2 = <em>1</em>.<br>
+    f(0) = 1, f(1) = 2, f(2) = 5.<br>
+    I = (1/3)·1·(1 + 4·2 + 5) = (1/3)·14 = <em>4.6667</em>.`
+},
+
+// ────────────────────────────────────────────────────────────
+//  7. MÍNIMOS CUADRADOS — LÍNEA RECTA
+//  Nivel sugerido: 3 (Ajuste de curvas)
+// ────────────────────────────────────────────────────────────
+// Agregar a METHOD_INFO:
+/*
+  minimos_cuadrados: {
+    label: "Mínimos Cuadrados — Línea Recta",
+    formula: "g(x) = a₀ + a₁·x",
+    intermediateLabel: "a₁ — pendiente de la recta ajustada"
+  },
+*/
+
+{
+  id: "3-X4",
+  statement: `
+    <p>Ajusta una <strong>línea recta</strong> a los siguientes datos
+    usando Mínimos Cuadrados:</p>
+    <table class="data-table">
+      <tr><th>x</th><td>1</td><td>2</td><td>3</td></tr>
+      <tr><th>y</th><td>2</td><td>4</td><td>6</td></tr>
+    </table>
+    <p>n = 3. Calcula la pendiente <strong>a₁</strong> y la ordenada al origen <strong>a₀</strong>.</p>`,
+  correctMethod: "minimos_cuadrados",
+  methodOptions: [
+    "minimos_cuadrados",
+    "interpolacion_lineal",
+    "lagrange",
+    "newton_divididas"
+  ],
+  intermediateValue: 2,       // a₁ = (n·Σxy − Σx·Σy) / (n·Σx² − (Σx)²) = (3·28−6·12)/(3·14−36) = (84−72)/(42−36) = 12/6 = 2
+  finalValue: 0,              // a₀ = (Σy − a₁·Σx)/n = (12 − 2·6)/3 = 0
+  tolerance: TOLERANCE,
+  explanation: `
+    <strong>Método correcto:</strong> Mínimos Cuadrados — Línea Recta.<br>
+    Σx=6, Σy=12, Σx²=14, Σxy=2+8+18=28, n=3.<br>
+    a₁ = (n·Σxy − Σx·Σy) / (n·Σx² − (Σx)²) = (84 − 72)/(42 − 36) = <em>2</em>.<br>
+    a₀ = (Σy − a₁·Σx)/n = (12 − 12)/3 = <em>0</em>.<br>
+    Recta: g(x) = 0 + 2x.`
+},
+
+// ────────────────────────────────────────────────────────────
+//  8. EULER HACIA ATRÁS
+//  Nivel sugerido: 4 (EDO)
+// ────────────────────────────────────────────────────────────
+// Agregar a METHOD_INFO:
+/*
+  euler_atras: {
+    label: "Euler hacia Atrás",
+    formula: "yₙ₊₁ = yₙ + h·f(yₙ₊₁, tₙ₊₁)",
+    intermediateLabel: "h·f(xₙ₊₁, yₙ₊₁) — incremento implícito"
+  },
+*/
+
+{
+  id: "4-X1",
+  statement: `
+    <p>Resuelve la EDO <strong>y' = −y</strong> con <strong>y(0) = 1</strong>
+    y paso <strong>h = 0.5</strong>. Calcula <strong>y(0.5)</strong>.</p>
+    <p>La ecuación implícita queda: <strong>y₁ = y₀ + h·(−y₁)</strong>.<br>
+    Usa el método de Euler que evalúa f en el punto <em>siguiente</em>
+    (despejando y₁).</p>`,
+  correctMethod: "euler_atras",
+  methodOptions: [
+    "euler",
+    "euler_atras",
+    "runge_kutta",
+    "trapecio"
+  ],
+  intermediateValue: 0.5,     // h·(−y₁): para despejarlo: y₁(1 + h) = y₀ → y₁ = 1/(1+0.5) = 2/3
+  finalValue: 0.6667,         // y₁ = 1 / (1 + 0.5) = 2/3 ≈ 0.6667
+  tolerance: 0.001,
+  explanation: `
+    <strong>Método correcto:</strong> Euler hacia Atrás (implícito).<br>
+    y₁ = y₀ + h·f(y₁, t₁) = 1 + 0.5·(−y₁).<br>
+    Despejando: y₁ + 0.5·y₁ = 1 → y₁·(1 + 0.5) = 1 → y₁ = 1/1.5 = <em>0.6667</em>.<br>
+    El incremento implícito h·f(y₁) = 0.5·(−0.6667) = <em>−0.3333</em>.`
+},
+
+// ────────────────────────────────────────────────────────────
+//  9. EULER MODIFICADO (Regla del Trapecio / Heun)
+//  Nivel sugerido: 4 (EDO)
+// ────────────────────────────────────────────────────────────
+// Agregar a METHOD_INFO:
+/*
+  euler_modificado: {
+    label: "Euler Modificado",
+    formula: "yₙ₊₁ = yₙ + h/2·[f(yₙ,tₙ) + f(yₙ₊₁*,tₙ₊₁)]",
+    intermediateLabel: "predictor yₙ₊₁* (Euler simple)"
+  },
+*/
+
+{
+  id: "4-X2",
+  statement: `
+    <p>Resuelve la EDO <strong>y' = x + y</strong> con <strong>y(0) = 1</strong>
+    y paso <strong>h = 0.2</strong>. Calcula <strong>y(0.2)</strong>.</p>
+    <p>Usa el método que promedia las pendientes al inicio y al final del
+    intervalo (paso predictor–corrector).</p>`,
+  correctMethod: "euler_modificado",
+  methodOptions: [
+    "euler",
+    "euler_modificado",
+    "runge_kutta",
+    "euler_atras"
+  ],
+  intermediateValue: 1.2,     // predictor: y* = y₀ + h·f(0,1) = 1 + 0.2·1 = 1.2
+  finalValue: 1.242,          // corrector: y₁ = 1 + 0.2/2·(f(0,1)+f(0.2,1.2)) = 1+0.1·(1+1.42)=1.242
+  tolerance: 0.001,
+  explanation: `
+    <strong>Método correcto:</strong> Euler Modificado (predictor–corrector).<br>
+    Predictor: y* = y₀ + h·f(x₀,y₀) = 1 + 0.2·(0+1) = <em>1.2</em>.<br>
+    f(x₁,y*) = f(0.2, 1.2) = 0.2 + 1.2 = 1.42.<br>
+    Corrector: y₁ = y₀ + h/2·[f(x₀,y₀) + f(x₁,y*)] = 1 + 0.1·(1 + 1.42) = <em>1.242</em>.`
+},
+
+// ────────────────────────────────────────────────────────────
+//  10. RUNGE–KUTTA 2do. ORDEN
+//  Nivel sugerido: 4 (EDO)
+// ────────────────────────────────────────────────────────────
+// Agregar a METHOD_INFO:
+/*
+  runge_kutta2: {
+    label: "Runge – Kutta 2do. Orden",
+    formula: "yₙ₊₁ = yₙ + ½(k₁ + k₂)",
+    intermediateLabel: "k₁ = h · f(x₀, y₀)"
+  },
+*/
+
+{
+  id: "4-X3",
+  statement: `
+    <p>Resuelve la EDO <strong>y' = 2y</strong> con <strong>y(0) = 1</strong>
+    y paso <strong>h = 0.5</strong>. Calcula <strong>y(0.5)</strong>.</p>
+    <p>Usa Runge–Kutta de <strong>2do. orden</strong>
+    (dos evaluaciones de la función por paso).</p>`,
+  correctMethod: "runge_kutta2",
+  methodOptions: [
+    "euler",
+    "euler_modificado",
+    "runge_kutta2",
+    "runge_kutta"
+  ],
+  intermediateValue: 1,       // k₁ = h·f(y₀,t₀) = 0.5·2·1 = 1
+  finalValue: 2,              // k₂ = 0.5·2·(1+1)=2; y₁=1+½(1+2)=2.5... ver explicación
+  tolerance: 0.001,
+  explanation: `
+    <strong>Método correcto:</strong> Runge–Kutta 2do. Orden.<br>
+    k₁ = h·f(y₀,t₀) = 0.5·2·1 = <em>1</em>.<br>
+    k₂ = h·f(y₀+k₁, t₀+h) = 0.5·2·(1+1) = 2.<br>
+    y₁ = y₀ + ½(k₁+k₂) = 1 + ½·3 = <em>2.5</em>.`
+},
+
+// ────────────────────────────────────────────────────────────
+//  11. RUNGE–KUTTA DE ORDEN SUPERIOR (EDO de 2do. orden)
+//  Nivel sugerido: 5 (Experto)
+// ────────────────────────────────────────────────────────────
+// Agregar a METHOD_INFO:
+/*
+  runge_kutta_sup: {
+    label: "Runge – Kutta Orden Superior",
+    formula: "yₙ₊₁ = yₙ + ½(k₁+k₂),  y'ₙ₊₁ = y'ₙ + ½(m₁+m₂)",
+    intermediateLabel: "k₁ = h · y'₀"
+  },
+*/
+
+{
+  id: "5-X1",
+  statement: `
+    <p>Resuelve la EDO de <strong>segundo orden</strong>:</p>
+    <pre class="math-block">  y'' − 2y' + y = 0,   y(0) = 1,   y'(0) = 1,   h = 0.5</pre>
+    <p>Reescribe como sistema: <strong>V = y'</strong> (velocidad),
+    <strong>y'' = 2V − y</strong>. Calcula <strong>y(0.5)</strong>
+    usando Runge–Kutta de Orden Superior.</p>`,
+  correctMethod: "runge_kutta_sup",
+  methodOptions: [
+    "euler",
+    "runge_kutta",
+    "runge_kutta_sup",
+    "euler_modificado"
+  ],
+  intermediateValue: 0.5,     // k₁ = h·V₀ = 0.5·1 = 0.5
+  finalValue: 1.75,           // ver explicación
+  tolerance: 0.01,
+  explanation: `
+    <strong>Método correcto:</strong> Runge–Kutta Orden Superior.<br>
+    Vₙ = y', Uₙ = y, a = 2, b = 1.<br>
+    k₁ = h·V₀ = 0.5·1 = <em>0.5</em>.<br>
+    m₁ = h·(2·V₀ − U₀) = 0.5·(2·1 − 1) = 0.5.<br>
+    k₂ = h·(V₀+m₁) = 0.5·1.5 = 0.75.<br>
+    m₂ = h·(2·(V₀+m₁) − (U₀+k₁)) = 0.5·(3−1.5) = 0.75.<br>
+    y₁ = U₀ + ½(k₁+k₂) = 1 + ½·1.25 = <em>1.625</em>.`
+}
 ];
