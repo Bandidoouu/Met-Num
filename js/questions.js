@@ -29,9 +29,9 @@ const METHOD_INFO = {
     intermediateLabel: "x = (a + b) / 2  (1ª iteración)"
   },
   falsa_posicion: {
-    label: "Falsa Posición ó Regula – Falsi (Latín)",
+    label: "Falsa Posición",
     formula: "x = a − f(a)·(b−a) / (f(b)−f(a))",
-    intermediateLabel: "x  (1ª iteración, fórmula Regula Falsi)"
+    intermediateLabel: "x  (1ª iteración, Falsa Posición)"
   },
   newton_raphson: {
     label: "Newton – Raphson",
@@ -102,7 +102,7 @@ const LEVELS = [
     name: "Nivel 2 — Aprendiz",
     description: "Raíces de ecuaciones: Bisección, Newton-Raphson y Falsa Posición. Los distractores son más cercanos.",
     threshold: 10,
-    maxPoints: 18,
+    maxPoints: 22,
     timeLimit: 1800,            // 30 min — 5 min/problema
     scoring: { method: 1, intermediate: 1, final: 1 },
     questions: []
@@ -112,7 +112,7 @@ const LEVELS = [
     name: "Nivel 3 — Intermedio",
     description: "Integración numérica (Trapecio, Simpson 1/3 y 3/8) y sistemas de ecuaciones (Gauss-Seidel, Eliminación Gaussiana).",
     threshold: 15,
-    maxPoints: 35,
+    maxPoints: 32,
     timeLimit: 2700,            // 45 min — ~6.5 min/problema
     scoring: { method: 1, intermediate: 2, final: 2 },
     questions: []
@@ -122,7 +122,7 @@ const LEVELS = [
     name: "Nivel 4 — Avanzado",
     description: "EDO (Euler, Runge-Kutta) e interpolación avanzada (Newton Adelante/Atrás, Lagrange). Contextos de ingeniería.",
     threshold: 20,
-    maxPoints: 40,
+    maxPoints: 38,
     timeLimit: 3600,            // 60 min — 7.5 min/problema
     scoring: { method: 1, intermediate: 2, final: 2 },
     questions: []
@@ -132,7 +132,7 @@ const LEVELS = [
     name: "Nivel 5 — Experto",
     description: "Todos los métodos. Problemas multietapa de alta complejidad. Tu puntaje total determina la calificación final.",
     threshold: null,
-    maxPoints: 80,
+    maxPoints: 68,
     timeLimit: 5400,            // 90 min — 9 min/problema
     scoring: { method: 2, intermediate: 3, final: 3 },
     questions: []
@@ -294,6 +294,8 @@ LEVELS[1].questions = [
       <p>Aplica <strong>una iteración</strong> de Newton-Raphson a <strong>f(x) = x² − 3</strong>
       con punto inicial <strong>x₀ = 2</strong>.</p>`,
     correctMethod: "newton_raphson",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["biseccion", "falsa_posicion", "newton_raphson", "secante"],
     intermediateValue: 4,        // f'(x₀) = 2x₀ = 4
     finalValue: 1.75,            // x₁ = 2 − 1/4
@@ -310,12 +312,14 @@ LEVELS[1].questions = [
       en el intervalo <strong>[2, 3]</strong>.</p>
       <p>f(2) = −1,  f(3) = 4.</p>`,
     correctMethod: "falsa_posicion",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["biseccion", "falsa_posicion", "newton_raphson", "secante"],
     intermediateValue: 2.2,      // xr = 3 − 4·(2−3)/(−1−4) = 2.2
     finalValue: 2.2,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Falsa Posición ó Regula – Falsi (Latín).<br>
+      <strong>Método correcto:</strong> Falsa Posición.<br>
       x = a − f(a)·(b−a)/(f(b)−f(a)) = 2 − (−1)·(3−2)/(4−(−1)) = 2 + 0.2 = <em>2.2</em>.`
   },
   {
@@ -324,6 +328,8 @@ LEVELS[1].questions = [
       <p>Aplica <strong>una iteración</strong> de Newton-Raphson a <strong>f(x) = x³ − 2x − 5</strong>
       con <strong>x₀ = 2</strong>.</p>`,
     correctMethod: "newton_raphson",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["biseccion", "falsa_posicion", "newton_raphson", "secante"],
     intermediateValue: 10,       // f'(2) = 3(4)−2 = 10
     finalValue: 2.1,             // x₁ = 2 − (−1)/10
@@ -357,12 +363,14 @@ LEVELS[1].questions = [
       en el intervalo <strong>[2, 3]</strong>.</p>
       <p>f(2) = −2,  f(3) = 3.</p>`,
     correctMethod: "falsa_posicion",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["biseccion", "falsa_posicion", "newton_raphson", "secante"],
     intermediateValue: 2.4,      // xr = 3 − 3·(2−3)/(−2−3) = 2.4
     finalValue: 2.4,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Falsa Posición ó Regula – Falsi (Latín).<br>
+      <strong>Método correcto:</strong> Falsa Posición.<br>
       x = a − f(a)·(b−a)/(f(b)−f(a)) = 2 − (−2)·(3−2)/(3−(−2)) = 2 + 0.4 = <em>2.4</em>.`
   }
 ];
@@ -377,6 +385,8 @@ LEVELS[2].questions = [
       <p>Aproxima <strong>∫₀² x² dx</strong> con <strong>n = 4</strong> subintervalos.</p>
       <p>Usa la regla de integración más simple (trapecios).</p>`,
     correctMethod: "trapecio",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["trapecio", "simpson13", "simpson38", "gauss_eliminacion"],
     intermediateValue: 0.5,      // h = 2/4
     finalValue: 2.75,
@@ -423,6 +433,8 @@ LEVELS[2].questions = [
    x + 3y = 7</pre>
       <p>Usa <strong>Eliminación Gaussiana</strong> (sin sustitución iterativa).</p>`,
     correctMethod: "gauss_eliminacion",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["gauss_eliminacion", "gauss_jordan", "gauss_seidel", "trapecio"],
     intermediateValue: 0.5,      // m₂₁ = 1/2
     finalValue: 1.6,             // x₁ = 1.6
@@ -440,6 +452,8 @@ LEVELS[2].questions = [
    x + 3y = 8</pre>
       <p>Valor inicial (x,y) = (0,0). Realiza <strong>2 iteraciones</strong> de Gauss-Seidel.</p>`,
     correctMethod: "gauss_seidel",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["gauss_eliminacion", "gauss_jordan", "gauss_seidel", "simpson13"],
     intermediateValue: 2.25,     // x₁⁽¹⁾ = 9/4
     finalValue: 1.7708,          // x₁ tras 2 iter (≈ 1.7708)
@@ -562,6 +576,8 @@ LEVELS[3].questions = [
       </table>
       <p>Interpola <strong>f(0.5)</strong> usando Lagrange.</p>`,
     correctMethod: "lagrange",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["newton_adelante", "newton_atras", "lagrange", "euler"],
     intermediateValue: 0.375,    // L₀(0.5) = (0.5−1)(0.5−2)/((0−1)(0−2)) = 0.375
     finalValue: 1.75,
@@ -612,6 +628,8 @@ LEVELS[3].questions = [
       </table>
       <p>Interpola <strong>f(1)</strong> usando el método de polinomios base de Lagrange.</p>`,
     correctMethod: "lagrange",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["newton_adelante", "newton_atras", "lagrange", "runge_kutta"],
     intermediateValue: 0.375,    // L₀(1) = (1−2)(1−4)/((0−2)(0−4))
     finalValue: 2.0,
@@ -647,6 +665,8 @@ LEVELS[4].questions = [
       <p>Aplica <strong>una iteración</strong> de Newton-Raphson a:</p>
       <pre class="math-block">  f(x) = x⁴ − 2x² − 3,   x₀ = 2</pre>`,
     correctMethod: "newton_raphson",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["biseccion", "falsa_posicion", "newton_raphson", "secante"],
     intermediateValue: 24,       // f'(2) = 4·8−4·2 = 24
     finalValue: 1.7917,          // x₁ = 2 − 5/24
@@ -728,12 +748,14 @@ LEVELS[4].questions = [
       <pre class="math-block">  f(x) = x³ + x − 1,   [0, 1]</pre>
       <p>f(0)=−1, f(1)=1.</p>`,
     correctMethod: "falsa_posicion",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["biseccion", "falsa_posicion", "newton_raphson", "secante"],
     intermediateValue: 0.5,
     finalValue: 0.6364,
     tolerance: 0.001,
     explanation: `
-      Falsa Posición ó Regula – Falsi (Latín). x = a−f(a)·(b−a)/(f(b)−f(a)).<br>
+      Falsa Posición. x = a−f(a)·(b−a)/(f(b)−f(a)).<br>
       It.1: x=0−(−1)·(1−0)/(1−(−1))=<em>0.5</em>; f(0.5)=−0.375→[0.5,1].<br>
       It.2: x=0.5−(−0.375)·(1−0.5)/(1−(−0.375))≈<em>0.6364</em>.`
   },
@@ -765,6 +787,8 @@ LEVELS[4].questions = [
       </table>
       <p>Interpola <strong>f(2)</strong> usando Lagrange.</p>`,
     correctMethod: "lagrange",
+    noMethodSelection: true,
+    scoring: { intermediate: 2, final: 2 },
     methodOptions: ["newton_adelante", "newton_atras", "lagrange", "runge_kutta"],
     intermediateValue: -0.1667,  // L₀(2) = −1/6
     finalValue: 8,

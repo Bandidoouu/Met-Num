@@ -33,9 +33,14 @@
       La tolerancia de error numérico es ±0.001 por defecto.
     </p>
 
-    <button id="btn-start" class="btn btn-primary" style="width:100%;font-size:1.05rem;padding:.75rem;">
-      Comenzar juego
-    </button>
+    <div style="display:flex;flex-direction:column;gap:.6rem;">
+      <button id="btn-start" class="btn btn-primary" style="width:100%;font-size:1.05rem;padding:.75rem;">
+        ▶ Nueva partida
+      </button>
+      <button id="btn-select-level" class="btn btn-secondary" style="width:100%;font-size:1rem;padding:.7rem;">
+        ☰ Seleccionar nivel
+      </button>
+    </div>
 
     <p style="font-size:.78rem;color:var(--text-muted);margin-top:1rem;">
       Equipo 1 · Dra. Oralia Zamora Pequeño · Semestre Enero-Junio 2026
@@ -45,7 +50,26 @@
 
 
 <!-- ══════════════════════════════════════════════════════════
-     PANTALLA 2: Intro de nivel
+     PANTALLA 2: Selección de nivel
+══════════════════════════════════════════════════════════ -->
+<div id="screen-level-select" class="screen">
+  <div style="flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:2rem;">
+    <div class="lsel-card">
+      <h2 style="color:var(--uanl-blue);text-align:center;margin-bottom:.4rem;">Seleccionar Nivel</h2>
+      <p style="text-align:center;font-size:.85rem;color:var(--text-muted);margin-bottom:1.2rem;">
+        Accede a cualquier nivel que hayas completado anteriormente.
+      </p>
+      <div id="lsel-grid"></div>
+      <button class="btn btn-secondary" onclick="Game.goToMenu()" style="width:100%;margin-top:1rem;">
+        ← Volver al menú
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════════════
+     PANTALLA 3: Intro de nivel
 ══════════════════════════════════════════════════════════ -->
 <div id="screen-level-intro" class="screen">
   <div style="flex:1;display:flex;align-items:center;justify-content:center;background:var(--bg);">

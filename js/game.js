@@ -62,12 +62,17 @@ const Game = (() => {
       state.answered = true;
       $('btn-verify').disabled = true;
       $('btn-next').style.display = 'none';
-      const s = LEVELS[state.currentLevelIdx].scoring;
+      const q = state.levelQuestions[state.currentQuestionIdx];
+      const s = q.scoring || LEVELS[state.currentLevelIdx].scoring;
+      const maxPts = q.noMethodSelection
+        ? s.intermediate + s.final
+        : s.method + s.intermediate + s.final;
       state.questionResults.push({
         num: state.currentQuestionIdx + 1,
         methodOk: false, intermediateOk: false, finalOk: false,
         earned: 0,
-        maxPts: s.method + s.intermediate + s.final,
+        maxPts,
+        noMethodSelection: !!q.noMethodSelection,
         timeout: true
       });
       const fb = $('feedback-area');
@@ -188,33 +193,40 @@ const Game = (() => {
     // Enunciado
     $('question-statement').innerHTML = q.statement;
 
-    // Opciones de método (orden aleatorio)
+    // Opciones de método (orden aleatorio) o modo sin selección
     const optionsContainer = $('method-options');
     optionsContainer.innerHTML = '';
-    const shuffled = shuffle(q.methodOptions);
-    shuffled.forEach(key => {
-      const info = METHOD_INFO[key];
-      const div = document.createElement('div');
-      div.className = 'method-option';
-      div.innerHTML = `
-        <label>
-          <input type="radio" name="method" value="${key}">
-          <span class="method-label">${info.label}</span>
-          <span class="method-formula">${info.formula}</span>
-        </label>`;
-      optionsContainer.appendChild(div);
-    });
+    const rightCol = document.querySelector('.right-col');
+    const questionBody = document.querySelector('.question-body');
 
-    // Listener para etiqueta dinámica del valor intermedio
-    optionsContainer.querySelectorAll('input[type=radio]').forEach(radio => {
-      radio.addEventListener('change', () => {
-        const info = METHOD_INFO[radio.value];
-        $('intermediate-label').textContent = info ? info.intermediateLabel : 'Valor intermedio';
+    if (q.noMethodSelection) {
+      rightCol.style.display = 'none';
+      questionBody.classList.add('no-method');
+      $('intermediate-label').textContent = METHOD_INFO[q.correctMethod].intermediateLabel;
+    } else {
+      rightCol.style.display = '';
+      questionBody.classList.remove('no-method');
+      const shuffled = shuffle(q.methodOptions);
+      shuffled.forEach(key => {
+        const info = METHOD_INFO[key];
+        const div = document.createElement('div');
+        div.className = 'method-option';
+        div.innerHTML = `
+          <label>
+            <input type="radio" name="method" value="${key}">
+            <span class="method-label">${info.label}</span>
+            <span class="method-formula">${info.formula}</span>
+          </label>`;
+        optionsContainer.appendChild(div);
       });
-    });
-
-    // Reset campos
-    $('intermediate-label').textContent = 'Selecciona el método para ver la etiqueta';
+      optionsContainer.querySelectorAll('input[type=radio]').forEach(radio => {
+        radio.addEventListener('change', () => {
+          const info = METHOD_INFO[radio.value];
+          $('intermediate-label').textContent = info ? info.intermediateLabel : 'Valor intermedio';
+        });
+      });
+      $('intermediate-label').textContent = 'Selecciona el método para ver la etiqueta';
+    }
     $('input-intermediate').value = '';
     $('input-final').value = '';
     $('feedback-area').innerHTML = '';
@@ -233,16 +245,15 @@ const Game = (() => {
     if (state.answered) return;
     const level = LEVELS[state.currentLevelIdx];
     const q = state.levelQuestions[state.currentQuestionIdx];
-    const scoring = level.scoring;
+    const scoring = q.scoring || level.scoring;
 
-    const selectedMethod = document.querySelector('input[name="method"]:checked');
     const intermediateRaw = $('input-intermediate').value.trim();
     const finalRaw = $('input-final').value.trim();
 
-    // Validaciones básicas de UI
-    if (!selectedMethod) {
-      showToast('Selecciona un método primero.');
-      return;
+    let selectedMethod = null;
+    if (!q.noMethodSelection) {
+      selectedMethod = document.querySelector('input[name="method"]:checked');
+      if (!selectedMethod) { showToast('Selecciona un método primero.'); return; }
     }
     if (intermediateRaw === '' || finalRaw === '') {
       showToast('Ingresa el valor intermedio y el resultado final.');
@@ -256,41 +267,52 @@ const Game = (() => {
     state.answered = true;
     $('btn-verify').disabled = true;
 
-    const methodOk = selectedMethod.value === q.correctMethod;
+    const methodOk = q.noMethodSelection ? true : selectedMethod.value === q.correctMethod;
     const tolerance = q.tolerance ?? TOLERANCE;
     const intermediateOk = near(intermediateRaw, q.intermediateValue, tolerance);
     const finalOk = near(finalRaw, q.finalValue, tolerance);
 
     let earned = 0;
-    if (methodOk) earned += scoring.method;
+    if (!q.noMethodSelection && methodOk) earned += scoring.method;
     if (intermediateOk) earned += scoring.intermediate;
     if (finalOk) earned += scoring.final;
     state.levelScore += earned;
 
+    const maxPts = q.noMethodSelection
+      ? scoring.intermediate + scoring.final
+      : scoring.method + scoring.intermediate + scoring.final;
+
     // Registro histórico del nivel
     state.questionResults.push({
       num: state.currentQuestionIdx + 1,
-      methodOk, intermediateOk, finalOk,
+      methodOk: q.noMethodSelection ? null : methodOk,
+      intermediateOk, finalOk,
       earned,
-      maxPts: scoring.method + scoring.intermediate + scoring.final
+      maxPts,
+      noMethodSelection: !!q.noMethodSelection
     });
 
-    // Feedback visual en opciones
-    document.querySelectorAll('input[name="method"]').forEach(radio => {
-      const opt = radio.closest('.method-option');
-      if (radio.value === q.correctMethod) opt.classList.add('correct-option');
-      if (radio.checked && radio.value !== q.correctMethod) opt.classList.add('wrong-option');
-    });
+    // Feedback visual en opciones (solo si hay selección)
+    if (!q.noMethodSelection) {
+      document.querySelectorAll('input[name="method"]').forEach(radio => {
+        const opt = radio.closest('.method-option');
+        if (radio.value === q.correctMethod) opt.classList.add('correct-option');
+        if (radio.checked && radio.value !== q.correctMethod) opt.classList.add('wrong-option');
+      });
+    }
 
     // Área de feedback
-    const fb = $('feedback-area');
-    fb.className = 'feedback-area ' + (earned > 0 ? 'has-feedback' : 'has-feedback wrong');
-    fb.innerHTML = `
+    const methodRow = q.noMethodSelection ? '' : `
       <div class="feedback-row ${methodOk ? 'ok' : 'ko'}">
         ${methodOk ? '✔' : '✘'} <strong>Método</strong>:
         ${methodOk ? 'Correcto' : `Incorrecto — era <em>${METHOD_INFO[q.correctMethod].label}</em>`}
         (${methodOk ? '+' + scoring.method : '0'} pt${scoring.method > 1 ? 's' : ''})
-      </div>
+      </div>`;
+
+    const fb = $('feedback-area');
+    fb.className = 'feedback-area ' + (earned > 0 ? 'has-feedback' : 'has-feedback wrong');
+    fb.innerHTML = `
+      ${methodRow}
       <div class="feedback-row ${intermediateOk ? 'ok' : 'ko'}">
         ${intermediateOk ? '✔' : '✘'} <strong>Valor intermedio</strong>:
         ${intermediateOk ? 'Correcto' : `Incorrecto — esperado <em>${q.intermediateValue}</em> (tol. ±${tolerance})`}
@@ -301,7 +323,7 @@ const Game = (() => {
         ${finalOk ? 'Correcto' : `Incorrecto — esperado <em>${q.finalValue}</em> (tol. ±${tolerance})`}
         (${finalOk ? '+' + scoring.final : '0'} pt${scoring.final > 1 ? 's' : ''})
       </div>
-      <div class="feedback-earned">Puntos en esta problema: <strong>${earned}</strong> / ${scoring.method + scoring.intermediate + scoring.final}</div>
+      <div class="feedback-earned">Puntos en esta problema: <strong>${earned}</strong> / ${maxPts}</div>
       <details class="explanation">
         <summary>Ver explicación del procedimiento</summary>
         <div class="explanation-body">${q.explanation}</div>
@@ -336,6 +358,7 @@ const Game = (() => {
     const level = LEVELS[state.currentLevelIdx];
     const score = state.levelScore;
     const passed = level.threshold === null || score >= level.threshold;
+    if (passed) savePassedLevel(level.id);
 
     const used  = level.timeLimit - timeLeft;
     $('end-time').textContent =
@@ -353,14 +376,19 @@ const Game = (() => {
 
     // ── Desglose por problema ──
     const s = level.scoring;
-    const desglose = state.questionResults.map(r => `
+    const desglose = state.questionResults.map(r => {
+      const methodCell = r.noMethodSelection
+        ? `<td class="td-center" style="color:var(--text-muted)">—</td>`
+        : `<td class="td-center ${r.methodOk ? 'ok-cell':'ko-cell'}">${r.methodOk ? '✔':'✘'}</td>`;
+      return `
       <tr>
         <td class="td-center">P${r.num}</td>
-        <td class="td-center ${r.methodOk ? 'ok-cell':'ko-cell'}">${r.methodOk ? '✔':'✘'}</td>
+        ${methodCell}
         <td class="td-center ${r.intermediateOk ? 'ok-cell':'ko-cell'}">${r.intermediateOk ? '✔':'✘'}</td>
         <td class="td-center ${r.finalOk ? 'ok-cell':'ko-cell'}">${r.finalOk ? '✔':'✘'}</td>
         <td class="td-center"><strong>${r.earned}</strong>/${r.maxPts}</td>
-      </tr>`).join('');
+      </tr>`;
+    }).join('');
 
     $('end-breakdown').innerHTML = `
       <table class="breakdown-table">
@@ -457,6 +485,67 @@ const Game = (() => {
     showScreen('screen-final');
   }
 
+  // ── Progreso persistente ───────────────────────────────────
+  function loadPassedLevels() {
+    try { return JSON.parse(localStorage.getItem('met-num-passed') || '[]'); }
+    catch { return []; }
+  }
+
+  function savePassedLevel(levelId) {
+    const passed = loadPassedLevels();
+    if (!passed.includes(levelId)) {
+      passed.push(levelId);
+      localStorage.setItem('met-num-passed', JSON.stringify(passed));
+    }
+  }
+
+  // ── Pantalla de selección de nivel ────────────────────────
+  function showLevelSelect() {
+    const passed = loadPassedLevels();
+    const grid = $('lsel-grid');
+    grid.innerHTML = '';
+
+    LEVELS.forEach((level, idx) => {
+      const isPassed  = passed.includes(level.id);
+      const isFirst   = idx === 0;
+      const prevPassed = idx === 0 || passed.includes(LEVELS[idx - 1].id);
+      const available = isFirst || prevPassed;
+
+      const icon  = isPassed ? '🏆' : (available ? '🔓' : '🔒');
+      const cls   = available ? 'available' : 'locked';
+      const badge = isPassed
+        ? '<span class="lsel-badge passed">✔ Completado</span>'
+        : available
+          ? '<span class="lsel-badge open">Disponible</span>'
+          : '<span class="lsel-badge locked-b">🔒 Bloqueado</span>';
+
+      const sub = level.threshold
+        ? `${level.questions.length} problemas · ${level.threshold} pts requeridos`
+        : `${level.questions.length} problemas · nivel final`;
+
+      const div = document.createElement('div');
+      div.className = `lsel-item ${cls}`;
+      div.innerHTML = `
+        <div class="lsel-icon">${icon}</div>
+        <div class="lsel-info">
+          <div class="lsel-name">${level.name}</div>
+          <div class="lsel-sub">${sub}</div>
+        </div>
+        ${badge}`;
+
+      if (available) {
+        div.addEventListener('click', () => {
+          state.totalLevelScores = [];
+          startLevel(idx);
+        });
+      }
+
+      grid.appendChild(div);
+    });
+
+    showScreen('screen-level-select');
+  }
+
   // ── Toast ──────────────────────────────────────────────────
   function showToast(msg) {
     let t = $('toast');
@@ -471,12 +560,13 @@ const Game = (() => {
   }
 
   // ── Exponer API pública ────────────────────────────────────
-  return { startGame, startLevel, loadQuestion, verify, nextQuestion, advanceLevel, retryLevel, goToMenu, showFinalResults };
+  return { startGame, startLevel, loadQuestion, verify, nextQuestion, advanceLevel, retryLevel, goToMenu, showFinalResults, showLevelSelect };
 })();
 
 // ── Event listeners (se añaden tras DOMContentLoaded) ────────
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('btn-start').addEventListener('click', Game.startGame);
+  document.getElementById('btn-select-level').addEventListener('click', Game.showLevelSelect);
   document.getElementById('btn-begin-level').addEventListener('click', Game.loadQuestion);
   document.getElementById('btn-verify').addEventListener('click', Game.verify);
   document.getElementById('btn-next').addEventListener('click', Game.nextQuestion);

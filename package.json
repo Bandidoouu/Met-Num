@@ -1,0 +1,28 @@
+{
+  "name": "met-num-quiz",
+  "version": "1.0.0",
+  "description": "Métodos Numéricos Quiz — UANL FIME",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder --win --x64"
+  },
+  "build": {
+    "appId": "mx.uanl.fime.metnumquiz",
+    "productName": "Métodos Numéricos Quiz",
+    "win": {
+      "target": "portable",
+      "icon": null
+    },
+    "files": [
+      "index.html",
+      "css/**",
+      "js/**",
+      "main.js"
+    ]
+  },
+  "devDependencies": {
+    "electron": "^35.0.0",
+    "electron-builder": "^26.0.0"
+  }
+}
