@@ -82,6 +82,61 @@ const METHOD_INFO = {
     label: "Runge – Kutta 4to. Orden",
     formula: "yₙ₊₁ = yₙ + 1/6·(k₁ + 2k₂ + 2k₃ + k₄)",
     intermediateLabel: "k₁ = h · f(x₀, y₀)"
+  },
+  metodo_grafico: {
+    label: "Método Gráfico",
+    formula: "Tabular f(x) y observar cambio de signo entre xᵢ y xᵢ₊₁",
+    intermediateLabel: "x donde inicia el cambio de signo"
+  },
+  punto_fijo: {
+    label: "Punto Fijo ó Sustituciones Sucesivas",
+    formula: "xᵢ₊₁ = g(xᵢ)",
+    intermediateLabel: "x₁ — primera iteración"
+  },
+  newton_divididas: {
+    label: "Newton con Diferencias Divididas",
+    formula: "g(x) = D⁰ + D¹(x−x₁) + D²(x−x₁)(x−x₂) + …",
+    intermediateLabel: "D¹ — primera diferencia dividida"
+  },
+  montante: {
+    label: "Método de Montante",
+    formula: "N.E. = (E.P.·E.A. − E.C.F.P.·E.C.C.P.) / P.A.",
+    intermediateLabel: "Nuevo elemento — pivoteo sin divisiones"
+  },
+  jacobi: {
+    label: "Jacobi",
+    formula: "xᵢ⁽ᵏ⁺¹⁾ = (bᵢ − Σ aᵢⱼxⱼ⁽ᵏ⁾) / aᵢᵢ  (valores del paso anterior)",
+    intermediateLabel: "x₁⁽¹⁾ — primera actualización de x₁"
+  },
+  newton_cotes_cerrada: {
+    label: "Newton–Cotes Cerradas",
+    formula: "I = α·h·Σ wᵢ·f(a + i·h),  h = (b−a)/n",
+    intermediateLabel: "h = (b − a) / n"
+  },
+  minimos_cuadrados: {
+    label: "Mínimos Cuadrados — Línea Recta",
+    formula: "g(x) = a₀ + a₁·x",
+    intermediateLabel: "a₁ — pendiente de la recta ajustada"
+  },
+  euler_atras: {
+    label: "Euler hacia Atrás",
+    formula: "yₙ₊₁ = yₙ + h·f(yₙ₊₁, tₙ₊₁)",
+    intermediateLabel: "h·f(xₙ₊₁, yₙ₊₁) — incremento implícito"
+  },
+  euler_modificado: {
+    label: "Euler Modificado",
+    formula: "yₙ₊₁ = yₙ + h/2·[f(yₙ,tₙ) + f(yₙ₊₁*,tₙ₊₁)]",
+    intermediateLabel: "predictor yₙ₊₁* (Euler simple)"
+  },
+  runge_kutta2: {
+    label: "Runge – Kutta 2do. Orden",
+    formula: "yₙ₊₁ = yₙ + ½(k₁ + k₂)",
+    intermediateLabel: "k₁ = h · f(x₀, y₀)"
+  },
+  runge_kutta_sup: {
+    label: "Runge – Kutta Orden Superior",
+    formula: "yₙ₊₁ = yₙ + ½(k₁+k₂),  y'ₙ₊₁ = y'ₙ + ½(m₁+m₂)",
+    intermediateLabel: "k₁ = h · y'₀"
   }
 };
 
@@ -132,7 +187,7 @@ const LEVELS = [
     name: "Nivel 5 — Experto",
     description: "Todos los métodos. Problemas multietapa de alta complejidad. Tu puntaje total determina la calificación final.",
     threshold: null,
-    maxPoints: 68,
+    maxPoints: 164,
     timeLimit: 5400,            // 90 min — 9 min/problema
     scoring: { method: 2, intermediate: 3, final: 3 },
     questions: []
@@ -803,7 +858,7 @@ LEVELS[4].questions = [
     <p>Se evalúa <strong>f(x) = x³ − 6.5x + 2</strong> en varios puntos:</p>
     <table class="data-table">
       <tr><th>x</th><td>−2</td><td>−1</td><td>0</td><td>1</td><td>2</td><td>3</td></tr>
-      <tr><th>f(x)</th><td>−5.5</td><td>7.5</td><td>2</td><td>−3.5</td><td>−3</td><td>9.5</td></tr>
+      <tr><th>f(x)</th><td>7</td><td>7.5</td><td>2</td><td>−3.5</td><td>−3</td><td>9.5</td></tr>
     </table>
     <p>¿Entre qué par de valores consecutivos de <em>x</em> existe una raíz
     (cambio de signo) empezando desde x = 0?</p>`,
@@ -814,8 +869,8 @@ LEVELS[4].questions = [
     "newton_raphson",
     "falsa_posicion"
   ],
-  intermediateValue: 1,     // x donde inicia el cambio: f(0)=2 > 0, f(1)=−3.5 < 0
-  finalValue: 2,            // x donde termina el cambio de signo detectado (x = 1 a x = 2 no; x = 0 a x = 1 sí)
+  intermediateValue: 0,     // x donde inicia el cambio: f(0)=2 > 0, f(1)=−3.5 < 0
+  finalValue: 1,            // x donde termina el cambio de signo detectado (entre x=0 y x=1)
   tolerance: TOLERANCE,
   explanation: `
     <strong>Método correcto:</strong> Gráfico (tabla de valores + cambio de signo).<br>
@@ -891,7 +946,7 @@ LEVELS[4].questions = [
     "lagrange"
   ],
   intermediateValue: 3,       // D¹₁ = (f(x₂)−f(x₁))/(x₂−x₁) = (8−2)/(3−1) = 3
-  finalValue: 11,             // g(4) = 2 + 3(4−1) + 0(…) = 2 + 9 = 11
+  finalValue: 10.4,           // g(4) = 2 + 9 − 0.6 = 10.4
   tolerance: TOLERANCE,
   explanation: `
     <strong>Método correcto:</strong> Newton con Diferencias Divididas (intervalos no uniformes).<br>
@@ -930,7 +985,7 @@ LEVELS[4].questions = [
     "gauss_seidel"
   ],
   intermediateValue: 5,       // N.E. a₂₂ = (2·3 − 1·1) / 1 = 5
-  finalValue: 1.4,            // x = (2·7 − 5·1)/(2·3 − 1·1) → ver explicación
+  finalValue: 1.6,            // sistema 2x+y=5; x+3y=7 → x=1.6
   tolerance: TOLERANCE,
   explanation: `
     <strong>Método correcto:</strong> Montante.<br>
@@ -938,7 +993,7 @@ LEVELS[4].questions = [
     N.E.₂₂ = (E.P.·E.A. − E.C.F.P.·E.C.C.P.) / P.A.
             = (2·3 − 1·1) / 1 = <em>5</em>.<br>
     N.E.₂₄ = (2·7 − 5·1) / 1 = 9. Nuevo pivote = 5.<br>
-    Columna x → N.E. = (5·5 − 1·9)/2 = (25−9)/2... → x = <em>1.4</em>, y = 2.2.`
+    Columna x → N.E. = (5·5 − 1·9)/2 = (25−9)/2... → x = <em>1.6</em>, y = 1.8.`
 },
 
 // ────────────────────────────────────────────────────────────
@@ -1197,7 +1252,7 @@ LEVELS[4].questions = [
     "euler_modificado"
   ],
   intermediateValue: 0.5,     // k₁ = h·V₀ = 0.5·1 = 0.5
-  finalValue: 1.75,           // ver explicación
+  finalValue: 1.625,          // y₁ = U₀ + ½(k₁+k₂) = 1 + ½·1.25 = 1.625
   tolerance: 0.01,
   explanation: `
     <strong>Método correcto:</strong> Runge–Kutta Orden Superior.<br>
