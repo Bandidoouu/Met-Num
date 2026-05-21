@@ -145,10 +145,10 @@ const LEVELS = [
   {
     id: 1,
     name: "Nivel 1 — Introducción",
-    description: "Interpolación Lineal y Diferencias Finitas de Newton. Identifica el método y calcula el parámetro de interpolación.",
-    threshold: 6,
-    maxPoints: 15,
-    timeLimit: 1200,            // 20 min — 4 min/problema
+    description: "Interpolación Lineal, Newton diferencias divididas. Identifica el método y calcula el parámetro de interpolación.",
+    threshold: 8,
+    maxPoints: 18,
+    timeLimit: 1440,            // 24 min — 4 min/problema
     scoring: { method: 1, intermediate: 1, final: 1 },
     questions: []   // se llena abajo
   },
@@ -195,54 +195,58 @@ const LEVELS = [
 ];
 
 // ============================================================
-//  NIVEL 1 — 5 problemas (Interp. Lineal, Newton Adelante/Atrás)
+//  NIVEL 1 — 6 problemas (Interp. Lineal, Newton Adelante/Atrás, Dif. Divididas)
 // ============================================================
 LEVELS[0].questions = [
   {
     id: "1-1",
     statement: `
-      <p>Se tienen los datos:</p>
+      <p>Se tienen únicamente <strong>2 puntos</strong> de datos:</p>
       <table class="data-table">
-        <tr><th>x</th><td>1</td><td>5</td></tr>
-        <tr><th>f(x)</th><td>2</td><td>10</td></tr>
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>1</td><td>2</td></tr>
+        <tr><td>5</td><td>10</td></tr>
       </table>
-      <p>Calcula <strong>f(3)</strong> usando el método apropiado.</p>`,
+      <p>Calcula el valor de <strong>x = 3</strong>.</p>`,
     correctMethod: "interpolacion_lineal",
     methodOptions: [
       "interpolacion_lineal",
       "newton_adelante",
-      "newton_atras",
+      "newton_divididas",
       "lagrange"
     ],
-    intermediateValue: 4,        // h = 5−1
-    finalValue: 6,               // f(3) = 2 + (10−2)/(5−1)·(3−1) = 6
+    intermediateValue: 4,
+    finalValue: 6,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Interpolación Lineal.<br>
-      <strong>Valor intermedio:</strong> b − a = 5 − 1 = <em>4</em>.<br>
-      <strong>Resultado:</strong> g(3) = f(b)−f(a)/(b−a)·(x−a)+f(a) = 2 + (10−2)/(5−1)·(3−1) = <em>6</em>.`
+      <strong>Método correcto:</strong> Interpolación Lineal (solo 2 puntos — recta entre ellos).<br>
+      b − a = 5 − 1 = <em>4</em>.<br>
+      g(3) = f(b)−f(a)/(b−a)·(x−a)+f(a) = 2 + (10−2)/(5−1)·(3−1) = <em>6</em>.`
   },
   {
     id: "1-2",
     statement: `
-      <p>Tabla de diferencias finitas con h = 1:</p>
+      <p>Tabla de diferencias divididas con espaciado constante h = 1:</p>
       <table class="data-table">
-        <tr><th>x</th><td>0</td><td>1</td><td>2</td><td>3</td></tr>
-        <tr><th>f(x)</th><td>1</td><td>3</td><td>7</td><td>13</td></tr>
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>3</td></tr>
+        <tr><td>2</td><td>7</td></tr>
+        <tr><td>3</td><td>13</td></tr>
       </table>
-      <p>Interpola <strong>f(0.5)</strong>. El punto de interés está cerca del <em>inicio</em> de la tabla.</p>`,
+      <p>Calcula el valor de <strong>x = 0.5</strong>. El punto está cerca del <em>inicio</em> de la tabla.</p>`,
     correctMethod: "newton_adelante",
     methodOptions: [
       "interpolacion_lineal",
       "newton_adelante",
       "newton_atras",
-      "lagrange"
+      "newton_divididas"
     ],
-    intermediateValue: 0.5,      // s = (0.5−0)/1
+    intermediateValue: 0.5,
     finalValue: 1.75,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Newton hacia Adelante (punto cerca del inicio).<br>
+      <strong>Método correcto:</strong> Newton hacia Adelante (datos equidistantes, punto cerca del inicio).<br>
       Δ'f(x₀)=2, Δ²f(x₀)=2, Δ³f(x₀)=0.<br>
       <strong>S</strong> = (x−xᵢ)/h = (0.5−0)/1 = <em>0.5</em>.<br>
       g(0.5) = 1 + 0.5·2 + [0.5·(−0.5)/2]·2 = 1 + 1 − 0.25 = <em>1.75</em>.`
@@ -250,24 +254,27 @@ LEVELS[0].questions = [
   {
     id: "1-3",
     statement: `
-      <p>Misma tabla con h = 1:</p>
+      <p>Tabla de diferencias divididas con espaciado constante h = 1:</p>
       <table class="data-table">
-        <tr><th>x</th><td>0</td><td>1</td><td>2</td><td>3</td></tr>
-        <tr><th>f(x)</th><td>1</td><td>3</td><td>7</td><td>13</td></tr>
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>3</td></tr>
+        <tr><td>2</td><td>7</td></tr>
+        <tr><td>3</td><td>13</td></tr>
       </table>
-      <p>Interpola <strong>f(2.5)</strong>. El punto de interés está cerca del <em>final</em> de la tabla.</p>`,
+      <p>Calcula el valor de <strong>x = 2.5</strong>. El punto está cerca del <em>final</em> de la tabla.</p>`,
     correctMethod: "newton_atras",
     methodOptions: [
       "interpolacion_lineal",
       "newton_adelante",
       "newton_atras",
-      "lagrange"
+      "newton_divididas"
     ],
-    intermediateValue: -0.5,     // p = (2.5−3)/1
+    intermediateValue: -0.5,
     finalValue: 9.75,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Newton hacia Atrás (punto cerca del final).<br>
+      <strong>Método correcto:</strong> Newton hacia Atrás (datos equidistantes, punto cerca del final).<br>
       ∇'f(xᵢ)=6, ∇²f(xᵢ)=2, ∇³f(xᵢ)=0.<br>
       <strong>S</strong> = (x−xᵢ)/h = (2.5−3)/1 = <em>−0.5</em>.<br>
       g(2.5) = 13 + (−0.5)·6 + [(−0.5)·(0.5)/2]·2 = 13−3−0.25 = <em>9.75</em>.`
@@ -275,51 +282,85 @@ LEVELS[0].questions = [
   {
     id: "1-4",
     statement: `
-      <p>Datos conocidos:</p>
+      <p>Se tienen únicamente <strong>2 puntos</strong> de datos:</p>
       <table class="data-table">
-        <tr><th>x</th><td>0</td><td>2</td></tr>
-        <tr><th>f(x)</th><td>5</td><td>9</td></tr>
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>0</td><td>5</td></tr>
+        <tr><td>2</td><td>9</td></tr>
       </table>
-      <p>Calcula <strong>f(1.5)</strong>.</p>`,
+      <p>Calcula el valor de <strong>x = 1.5</strong>.</p>`,
     correctMethod: "interpolacion_lineal",
     methodOptions: [
       "interpolacion_lineal",
       "newton_adelante",
-      "newton_atras",
+      "newton_divididas",
       "lagrange"
     ],
-    intermediateValue: 2,        // h = 2−0
-    finalValue: 8,               // f(1.5) = 5 + (9−5)/2·1.5 = 8
+    intermediateValue: 2,
+    finalValue: 8,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Interpolación Lineal (solo 2 puntos dados).<br>
+      <strong>Método correcto:</strong> Interpolación Lineal (solo 2 puntos — recta entre ellos).<br>
       b − a = 2 − 0 = <em>2</em>.<br>
       g(1.5) = f(b)−f(a)/(b−a)·(x−a)+f(a) = 5 + [(9−5)/2]·1.5 = <em>8</em>.`
   },
   {
     id: "1-5",
     statement: `
-      <p>Datos conocidos (h = 1):</p>
+      <p>Tabla de diferencias divididas con espaciado constante h = 1:</p>
       <table class="data-table">
-        <tr><th>x</th><td>1</td><td>2</td><td>3</td><td>4</td></tr>
-        <tr><th>f(x)</th><td>3</td><td>7</td><td>13</td><td>21</td></tr>
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>1</td><td>3</td></tr>
+        <tr><td>2</td><td>7</td></tr>
+        <tr><td>3</td><td>13</td></tr>
+        <tr><td>4</td><td>21</td></tr>
       </table>
-      <p>Interpola <strong>f(1.5)</strong>. Elige el método más adecuado para un punto cercano al <em>inicio</em>.</p>`,
+      <p>Calcula el valor de <strong>x = 1.5</strong>. El punto está cerca del <em>inicio</em> de la tabla.</p>`,
     correctMethod: "newton_adelante",
     methodOptions: [
       "interpolacion_lineal",
       "newton_adelante",
       "newton_atras",
-      "lagrange"
+      "newton_divididas"
     ],
-    intermediateValue: 0.5,      // s = (1.5−1)/1
+    intermediateValue: 0.5,
     finalValue: 4.75,
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método correcto:</strong> Newton hacia Adelante.<br>
+      <strong>Método correcto:</strong> Newton hacia Adelante (datos equidistantes, punto cerca del inicio).<br>
       Δ'f(x₀)=4, Δ²f(x₀)=2, Δ³f(x₀)=0.<br>
       S = (x−xᵢ)/h = (1.5−1)/1 = <em>0.5</em>.<br>
       g(1.5) = 3 + 0.5·4 + [0.5·(−0.5)/2]·2 = 3+2−0.25 = <em>4.75</em>.`
+  },
+  {
+    id: "1-6",
+    statement: `
+      <p>Datos con <strong>espaciado irregular</strong> (no equidistante):</p>
+      <table class="data-table">
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>1</td><td>2</td></tr>
+        <tr><td>2</td><td>5</td></tr>
+        <tr><td>4</td><td>17</td></tr>
+        <tr><td>6</td><td>37</td></tr>
+      </table>
+      <p>Construye la tabla de diferencias divididas y calcula el valor de <strong>x = 3</strong>.</p>`,
+    correctMethod: "newton_divididas",
+    methodOptions: [
+      "interpolacion_lineal",
+      "newton_adelante",
+      "newton_divididas",
+      "lagrange"
+    ],
+    intermediateValue: 3,
+    finalValue: 10,
+    tolerance: TOLERANCE,
+    explanation: `
+      <strong>Método correcto:</strong> Newton con Diferencias Divididas (espaciado irregular — no se puede usar Newton Adelante/Atrás).<br>
+      D⁰: 2, 5, 17, 37.<br>
+      D¹: (5−2)/(2−1)=<em>3</em>; (17−5)/(4−2)=6; (37−17)/(6−4)=10.<br>
+      D²: (6−3)/(4−1)=1; (10−6)/(6−2)=1. D³=0.<br>
+      g(x) = 2 + 3(x−1) + 1·(x−1)(x−2).<br>
+      g(3) = 2 + 3·(2) + 1·(2)·(1) = 2 + 6 + 2 = <em>10</em>.`
   }
 ];
 
@@ -586,12 +627,16 @@ LEVELS[3].questions = [
   {
     id: "4-3",
     statement: `
-      <p>Datos conocidos (h = 1):</p>
+      <p>Tabla de diferencias divididas con espaciado constante h = 1:</p>
       <table class="data-table">
-        <tr><th>x</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
-        <tr><th>f(x)</th><td>1</td><td>2</td><td>5</td><td>10</td><td>17</td></tr>
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>2</td></tr>
+        <tr><td>2</td><td>5</td></tr>
+        <tr><td>3</td><td>10</td></tr>
+        <tr><td>4</td><td>17</td></tr>
       </table>
-      <p>Interpola <strong>f(0.5)</strong>. El punto está cerca del <em>inicio</em> de la tabla.</p>`,
+      <p>Calcula el valor de <strong>x = 0.5</strong>. El punto está cerca del <em>inicio</em> de la tabla.</p>`,
     correctMethod: "newton_adelante",
     methodOptions: ["newton_adelante", "newton_atras", "lagrange", "euler"],
     intermediateValue: 0.5,      // s = 0.5
@@ -605,12 +650,16 @@ LEVELS[3].questions = [
   {
     id: "4-4",
     statement: `
-      <p>Misma tabla de 5 puntos con h = 1:</p>
+      <p>Tabla de diferencias divididas con espaciado constante h = 1:</p>
       <table class="data-table">
-        <tr><th>x</th><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td></tr>
-        <tr><th>f(x)</th><td>1</td><td>2</td><td>5</td><td>10</td><td>17</td></tr>
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>2</td></tr>
+        <tr><td>2</td><td>5</td></tr>
+        <tr><td>3</td><td>10</td></tr>
+        <tr><td>4</td><td>17</td></tr>
       </table>
-      <p>Interpola <strong>f(3.5)</strong>. El punto está cerca del <em>final</em> de la tabla.</p>`,
+      <p>Calcula el valor de <strong>x = 3.5</strong>. El punto está cerca del <em>final</em> de la tabla.</p>`,
     correctMethod: "newton_atras",
     methodOptions: ["newton_adelante", "newton_atras", "lagrange", "runge_kutta"],
     intermediateValue: -0.5,     // p = (3.5−4)/1
@@ -624,23 +673,27 @@ LEVELS[3].questions = [
   {
     id: "4-5",
     statement: `
-      <p>Dado el conjunto de puntos:</p>
+      <p>Datos con <strong>espaciado irregular</strong> (no equidistante):</p>
       <table class="data-table">
-        <tr><th>x</th><td>0</td><td>1</td><td>2</td></tr>
-        <tr><th>f(x)</th><td>1</td><td>3</td><td>7</td></tr>
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>2</td></tr>
+        <tr><td>3</td><td>10</td></tr>
+        <tr><td>4</td><td>17</td></tr>
       </table>
-      <p>Interpola <strong>f(0.5)</strong> usando Lagrange.</p>`,
+      <p>Usa los polinomios base de Lagrange para calcular el valor de <strong>x = 2</strong>.</p>`,
     correctMethod: "lagrange",
     noMethodSelection: true,
     scoring: { intermediate: 2, final: 2 },
-    methodOptions: ["newton_adelante", "newton_atras", "lagrange", "euler"],
-    intermediateValue: 0.375,    // L₀(0.5) = (0.5−1)(0.5−2)/((0−1)(0−2)) = 0.375
-    finalValue: 1.75,
+    methodOptions: ["newton_adelante", "newton_atras", "lagrange", "newton_divididas"],
+    intermediateValue: -0.1667,  // L₀(2) = (2−1)(2−3)(2−4)/((0−1)(0−3)(0−4)) = −1/6
+    finalValue: 5,               // f(2) = 2²+1 = 5
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método:</strong> Lagrange (uso explícito de polinomios base).<br>
-      L₀(0.5)=(−0.5)(−1.5)/(2)=<em>0.375</em>; L₁=0.75; L₂=−0.125.<br>
-      f(0.5)=1·0.375+3·0.75+7·(−0.125)=0.375+2.25−0.875=<em>1.75</em>.`
+      <strong>Método:</strong> Lagrange (espaciado irregular — los polinomios base se construyen con todos los nodos).<br>
+      L₀(2)=(2−1)(2−3)(2−4)/((0−1)(0−3)(0−4))=(1)(−1)(−2)/(−12)=−1/6≈<em>−0.1667</em>.<br>
+      L₁(2)=2/3; L₂(2)=2/3; L₃(2)=−1/6.<br>
+      g(2)=1·(−1/6)+2·(2/3)+10·(2/3)+17·(−1/6)=−3+8=<em>5</em>.`
   },
   {
     id: "4-6",
@@ -676,23 +729,27 @@ LEVELS[3].questions = [
   {
     id: "4-8",
     statement: `
-      <p>Puntos de datos:</p>
+      <p>Datos con <strong>espaciado irregular</strong> (no equidistante):</p>
       <table class="data-table">
-        <tr><th>x</th><td>0</td><td>2</td><td>4</td></tr>
-        <tr><th>f(x)</th><td>1</td><td>5</td><td>17</td></tr>
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>0</td><td>1</td></tr>
+        <tr><td>1</td><td>2</td></tr>
+        <tr><td>4</td><td>17</td></tr>
+        <tr><td>6</td><td>37</td></tr>
       </table>
-      <p>Interpola <strong>f(1)</strong> usando el método de polinomios base de Lagrange.</p>`,
+      <p>Usa los polinomios base de Lagrange para calcular el valor de <strong>x = 2</strong>.</p>`,
     correctMethod: "lagrange",
     noMethodSelection: true,
     scoring: { intermediate: 2, final: 2 },
-    methodOptions: ["newton_adelante", "newton_atras", "lagrange", "runge_kutta"],
-    intermediateValue: 0.375,    // L₀(1) = (1−2)(1−4)/((0−2)(0−4))
-    finalValue: 2.0,
+    methodOptions: ["newton_adelante", "newton_atras", "lagrange", "newton_divididas"],
+    intermediateValue: -0.3333,  // L₀(2) = (2−1)(2−4)(2−6)/((0−1)(0−4)(0−6)) = −1/3
+    finalValue: 5,               // f(2) = 2²+1 = 5
     tolerance: TOLERANCE,
     explanation: `
-      <strong>Método:</strong> Lagrange.<br>
-      L₀(1)=(−1)(−3)/8=3/8=<em>0.375</em>; L₁(1)=3/4; L₂(1)=−1/8.<br>
-      f(1)=1·0.375+5·0.75+17·(−0.125)=0.375+3.75−2.125=<em>2.0</em>.`
+      <strong>Método:</strong> Lagrange (espaciado irregular — los polinomios base se construyen con todos los nodos).<br>
+      L₀(2)=(2−1)(2−4)(2−6)/((0−1)(0−4)(0−6))=(1)(−2)(−4)/(−24)=−1/3≈<em>−0.3333</em>.<br>
+      L₁(2)=16/15; L₂(2)=1/3; L₃(2)=−1/15.<br>
+      g(2)=1·(−1/3)+2·(16/15)+17·(1/3)+37·(−1/15)=75/15=<em>5</em>.`
   }
 ];
 
@@ -819,10 +876,14 @@ LEVELS[4].questions = [
     statement: `
       <p>Datos conocidos (h = 2):</p>
       <table class="data-table">
-        <tr><th>x</th><td>0</td><td>2</td><td>4</td><td>6</td><td>8</td></tr>
-        <tr><th>f(x)</th><td>3</td><td>11</td><td>27</td><td>51</td><td>83</td></tr>
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>0</td><td>3</td></tr>
+        <tr><td>2</td><td>11</td></tr>
+        <tr><td>4</td><td>27</td></tr>
+        <tr><td>6</td><td>51</td></tr>
+        <tr><td>8</td><td>83</td></tr>
       </table>
-      <p>Interpola <strong>f(1)</strong> (punto cercano al inicio).</p>`,
+      <p>Calcula el valor de <strong>x = 1</strong> usando el punto cercano al inicio de la tabla.</p>`,
     correctMethod: "newton_adelante",
     methodOptions: ["newton_adelante", "newton_atras", "lagrange", "euler"],
     intermediateValue: 0.5,      // s = (1−0)/2
@@ -837,10 +898,13 @@ LEVELS[4].questions = [
     statement: `
       <p>Datos conocidos:</p>
       <table class="data-table">
-        <tr><th>x</th><td>0</td><td>1</td><td>3</td><td>4</td></tr>
-        <tr><th>f(x)</th><td>2</td><td>4</td><td>14</td><td>22</td></tr>
+        <tr><th>x</th><th>f(x)</th></tr>
+        <tr><td>0</td><td>2</td></tr>
+        <tr><td>1</td><td>4</td></tr>
+        <tr><td>3</td><td>14</td></tr>
+        <tr><td>4</td><td>22</td></tr>
       </table>
-      <p>Interpola <strong>f(2)</strong> usando Lagrange.</p>`,
+      <p>Usa los polinomios base de Lagrange para calcular el valor de <strong>x = 2</strong>.</p>`,
     correctMethod: "lagrange",
     noMethodSelection: true,
     scoring: { intermediate: 2, final: 2 },
@@ -1025,13 +1089,13 @@ LEVELS[4].questions = [
     "montante"
   ],
   intermediateValue: 2,       // x₁⁽¹⁾ = (9 − 1·1) / 4 = 2
-  finalValue: 1.875,          // x₁⁽²⁾ = (9 − 1·2.333) / 4 ≈ 1.667 ... ver explicación
+  finalValue: 1.6667,         // x₁⁽²⁾ = (9 − 1·2.333) / 4 ≈ 1.6667
   tolerance: TOLERANCE,
   explanation: `
     <strong>Método correcto:</strong> Jacobi (usa valores del paso anterior en cada ecuación).<br>
     It.1: x₁⁽¹⁾ = (9 − 1·1)/4 = <em>2</em>;  y₁⁽¹⁾ = (8 − 1·1)/3 = 2.333.<br>
-    It.2: x₁⁽²⁾ = (9 − 1·2.333)/4 = <em>1.667</em>;  y₁⁽²⁾ = (8 − 1·2)/3 = 2.<br>
-    ε_x = |1.667 − 2| = 0.333 (continúa iterando hasta ε ≤ 0.001).`
+    It.2: x₁⁽²⁾ = (9 − 1·2.333)/4 = <em>1.6667</em>;  y₁⁽²⁾ = (8 − 1·2)/3 = 2.<br>
+    ε_x = |1.6667 − 2| = 0.3333 (continúa iterando hasta ε ≤ 0.001).`
 },
 
 // ────────────────────────────────────────────────────────────
@@ -1177,7 +1241,7 @@ LEVELS[4].questions = [
     "euler_atras"
   ],
   intermediateValue: 1.2,     // predictor: y* = y₀ + h·f(0,1) = 1 + 0.2·1 = 1.2
-  finalValue: 1.242,          // corrector: y₁ = 1 + 0.2/2·(f(0,1)+f(0.2,1.2)) = 1+0.1·(1+1.42)=1.242
+  finalValue: 1.24,           // corrector: y₁ = 1 + 0.2/2·(f(0,1)+f(0.2,1.2)) = 1+0.1·(1+1.4)=1.24
   tolerance: 0.001,
   explanation: `
     <strong>Método correcto:</strong> Euler Modificado (predictor–corrector).<br>
@@ -1214,13 +1278,13 @@ LEVELS[4].questions = [
     "runge_kutta"
   ],
   intermediateValue: 1,       // k₁ = h·f(y₀,t₀) = 0.5·2·1 = 1
-  finalValue: 2,              // k₂ = 0.5·2·(1+1)=2; y₁=1+½(1+2)=2.5... ver explicación
+  finalValue: 2.5,            // k₁=1; k₂=0.5·2·(1+1)=2; y₁=1+½(1+2)=2.5
   tolerance: 0.001,
   explanation: `
     <strong>Método correcto:</strong> Runge–Kutta 2do. Orden.<br>
     k₁ = h·f(y₀,t₀) = 0.5·2·1 = <em>1</em>.<br>
     k₂ = h·f(y₀+k₁, t₀+h) = 0.5·2·(1+1) = 2.<br>
-    y₁ = y₀ + ½(k₁+k₂) = 1 + ½·3 = <em>2.5</em>.`
+    y₁ = y₀ + ½(k₁+k₂) = 1 + ½·(1+2) = <em>2.5</em>.`
 },
 
 // ────────────────────────────────────────────────────────────
